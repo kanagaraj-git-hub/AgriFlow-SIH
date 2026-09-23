@@ -29,6 +29,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Ensure explicit UTF-8 charset on text, javascript, and json responses
+@app.middleware("http")
+async def enforce_utf8_charset_middleware(request, call_next):
+    response = await call_next(request)
+    ct = response.headers.get("content-type", "")
+    if ct.startswith("text/") or "javascript" in ct or "json" in ct:
+        if "charset" not in ct.lower():
+            response.headers["content-type"] = f"{ct}; charset=utf-8"
+    return response
+
 # Include Routers
 app.include_router(routes_auth.router)
 app.include_router(routes_officer.router)

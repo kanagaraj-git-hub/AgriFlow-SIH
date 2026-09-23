@@ -84,3 +84,34 @@ body {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] input[type="text"],
+[dir="rtl"] input[type="tel"],
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="password"],
+[dir="rtl"] input[type="number"],
+[dir="rtl"] input[type="date"],
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .space-x-1 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-1\.5 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-2\.5 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-3\.5 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+

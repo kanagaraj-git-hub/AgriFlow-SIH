@@ -48,24 +48,24 @@ Open your browser at:
 
 ---
 
-## 🎯 13-Step Primary Demonstration Flow (SIH Demo)
+## 🎯 13-Step Primary Demonstration Flow
 
-AgriFlow includes pre-configured demo seed data and an interactive **Demo Assistance Bar** at the bottom of the screen.
+AgriFlow includes pre-configured seed data for demonstrating produce discovery, officer verification, and buyer workflows.
 
 ### Step-by-Step Flow:
-1. **Officer Login**: Click **Officer (Ravi Kumar)** on the demo bar (or sign in with `ravi.kumar@agri.tn.gov.in` / `officer123`).
+1. **Officer Login**: Sign in via the Login modal with `ravi.kumar@agri.tn.gov.in` / `officer123`.
 2. **Officer Profile**: Review Ravi Kumar's profile (Assistant Agricultural Officer, Sankari, Salem, Tamil Nadu).
-3. **Officer Adds Onion**: Click **+ Add Produce** → Onion, 15 Tons, Sankari, Salem → status is immediately **✓ Verified**.
-4. **Officer Adds Tomato**: Add Tomato, 16 Tons, Sankari, Salem → status is immediately **✓ Verified**.
-5. **Farmer Login**: Click **Farmer (Kumar)** on the demo bar (or sign in with `9123456780` / `farmer123`).
+3. **Officer Adds Onion**: Click **+ Add Produce** → Onion, 15 Tons, Price: ₹ 22,000 / Ton, Sankari, Salem → status is immediately **✓ Verified**.
+4. **Officer Adds Tomato**: Add Tomato, 16 Tons, Price: ₹ 18,000 / Ton, Sankari, Salem → status is immediately **✓ Verified**.
+5. **Farmer Login**: Sign in via the Login modal with `9123456780` / `farmer123`.
 6. **Farmer Adds Crop**: Click **+ Add Crop** → Onion, 2 Acres, 5 Tons expected, Harvest: 25 September, Sankari, Salem.
 7. **Farmer Submits Request**: Status immediately becomes **🟡 Pending Verification** and auto-routes to Officer Ravi Kumar.
-8. **Officer Sees Request**: Switch to Officer Ravi Kumar → view the pending request from Farmer Kumar in the verification queue.
+8. **Officer Sees Request**: Log in as Officer Ravi Kumar → view the pending request from Farmer Kumar in the verification queue.
 9. **Officer Verifies It**: Click **VERIFY** → produce record status becomes **🟢 ✓ Verified**.
 10. **Produce Becomes Searchable**: Real-time WebSocket notifies all clients instantly.
-11. **Buyer Opens Discovery**: Click **Public Buyer View** (or open `http://127.0.0.1:8000/#produce`).
+11. **Buyer Opens Discovery**: Navigate to "View Produce" (`http://127.0.0.1:8000/#produce`).
 12. **Search Results**: Filter for **Onion** → **Salem** → **Sankari**:
-    - **15 Tons** (Officer-recorded verified produce)
+    - **15 Tons** (Officer-recorded verified produce with price)
     - **5 Tons** (Farmer-submitted verified produce)
 13. **Buyer Purchase Inquiry**: Click **View Details** on any produce and send a purchase request with contact details and requested quantity.
 

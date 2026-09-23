@@ -157,17 +157,25 @@ async def add_produce(req: ProduceCreate, user: Dict[str, Any] = Depends(require
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    price_val = None
+    if req.price is not None:
+        if req.price < 0:
+            conn.close()
+            raise HTTPException(status_code=400, detail="Price cannot be negative")
+        price_val = round(float(req.price), 2)
+
     # When an officer submits, status is directly 'VERIFIED' and source_type is 'OFFICER_ENTRY'
     cursor.execute("""
         INSERT INTO produce_records (
-            crop_name, quantity, unit, area, village, district, state,
+            crop_name, quantity, unit, price, area, village, district, state,
             produce_type, quality, availability_date, expected_harvest_date,
             source_type, officer_id, verification_status, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'OFFICER_ENTRY', ?, 'VERIFIED', ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'OFFICER_ENTRY', ?, 'VERIFIED', ?)
     """, (
         req.crop_name.strip(),
         req.quantity,
         req.unit.strip(),
+        price_val,
         req.area.strip(),
         req.village.strip() if req.village else "",
         req.district.strip(),
@@ -212,11 +220,19 @@ async def update_produce(id: int, req: ProduceUpdate, user: Dict[str, Any] = Dep
     new_status = req.verification_status if req.verification_status is not None else existing["verification_status"]
     new_notes = req.notes if req.notes is not None else existing["notes"]
 
+    if req.price is not None:
+        if req.price < 0:
+            conn.close()
+            raise HTTPException(status_code=400, detail="Price cannot be negative")
+        new_price = round(float(req.price), 2)
+    else:
+        new_price = existing["price"]
+
     cursor.execute("""
         UPDATE produce_records
-        SET quantity = ?, unit = ?, quality = ?, availability_date = ?, verification_status = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
+        SET quantity = ?, unit = ?, price = ?, quality = ?, availability_date = ?, verification_status = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
-    """, (new_qty, new_unit, new_quality, new_avail, new_status, new_notes, id))
+    """, (new_qty, new_unit, new_price, new_quality, new_avail, new_status, new_notes, id))
     conn.commit()
 
     cursor.execute("SELECT * FROM produce_records WHERE id = ?", (id,))

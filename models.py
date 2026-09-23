@@ -53,6 +53,7 @@ class ProduceCreate(BaseModel):
     crop_name: str
     quantity: float
     unit: str = "Tons"
+    price: Optional[float] = None
     area: str
     village: Optional[str] = ""
     district: str
@@ -66,6 +67,7 @@ class ProduceCreate(BaseModel):
 class ProduceUpdate(BaseModel):
     quantity: Optional[float] = None
     unit: Optional[str] = None
+    price: Optional[float] = None
     quality: Optional[str] = None
     availability_date: Optional[str] = None
     expected_harvest_date: Optional[str] = None

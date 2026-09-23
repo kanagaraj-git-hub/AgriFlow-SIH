@@ -69,6 +69,7 @@ def init_db():
         crop_name TEXT NOT NULL,
         quantity REAL NOT NULL,
         unit TEXT NOT NULL DEFAULT 'Tons',
+        price REAL,
         area TEXT NOT NULL,
         village TEXT,
         district TEXT NOT NULL,
@@ -145,6 +146,12 @@ def init_db():
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
     """)
+
+    # Check and migrate columns safely for existing databases
+    cursor.execute("PRAGMA table_info(produce_records)")
+    columns = [row["name"] for row in cursor.fetchall()]
+    if "price" not in columns:
+        cursor.execute("ALTER TABLE produce_records ADD COLUMN price REAL")
 
     # Indexes for fast location and produce searches
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_produce_location ON produce_records(state, district, area);")

@@ -28,6 +28,8 @@
   </script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="/static/i18n/languages.js" charset="UTF-8"></script>
+  <script src="/static/i18n/index.js" charset="UTF-8"></script>
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -44,33 +46,32 @@
         <div>
           <span class="text-xl font-bold tracking-tight text-slate-900 flex items-center">
             Agri<span class="text-brand-700">Flow</span>
-            <span class="ml-2 text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">SIH Platform</span>
           </span>
-          <p class="text-[11px] text-slate-500 font-medium leading-none mt-0.5">Discover. Verify. Connect.</p>
+          <p class="text-[11px] text-slate-500 font-medium leading-none mt-0.5" data-i18n="landing.tagline">Discover. Verify. Connect.</p>
         </div>
       </div>
 
       <!-- Navigation Links -->
       <nav class="hidden md:flex items-center space-x-1" id="nav-links">
-        <button onclick="navigate('landing')" class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" data-view="landing">
+        <button onclick="navigate('landing')" class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" data-view="landing" data-i18n="navigation.home">
           Home
         </button>
         <button onclick="navigate('produce')" class="nav-item px-3 py-2 rounded-lg text-sm font-semibold text-brand-700 hover:bg-brand-50 transition flex items-center space-x-1.5" data-view="produce">
           <i data-lucide="search" class="w-4 h-4"></i>
-          <span>View Produce</span>
+          <span data-i18n="navigation.viewProduce">View Produce</span>
         </button>
 
         <!-- Officer links (rendered conditionally) -->
         <div id="officer-nav" class="hidden flex items-center space-x-1">
           <button onclick="navigate('officer-dashboard')" class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" data-view="officer-dashboard">
-            Dashboard
+            <span data-i18n="common.dashboard">Dashboard</span>
           </button>
           <button onclick="openModal('add-produce-modal')" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand-700 text-white hover:bg-brand-800 transition flex items-center space-x-1 shadow-sm">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add Produce</span>
+            <span data-i18n="navigation.addProduce">Add Produce</span>
           </button>
           <button onclick="navigate('officer-dashboard', 'requests')" class="relative nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center space-x-1">
-            <span>Farmer Requests</span>
+            <span data-i18n="navigation.farmerRequests">Farmer Requests</span>
             <span id="nav-pending-badge" class="hidden ml-1.5 px-1.5 py-0.2 text-xs font-bold rounded-full bg-amber-500 text-white">0</span>
           </button>
         </div>
@@ -78,14 +79,14 @@
         <!-- Farmer links (rendered conditionally) -->
         <div id="farmer-nav" class="hidden flex items-center space-x-1">
           <button onclick="navigate('farmer-dashboard')" class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" data-view="farmer-dashboard">
-            Dashboard
+            <span data-i18n="common.dashboard">Dashboard</span>
           </button>
           <button onclick="openModal('add-crop-modal')" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand-700 text-white hover:bg-brand-800 transition flex items-center space-x-1 shadow-sm">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Add Crop</span>
+            <span data-i18n="navigation.addCrop">Add Crop</span>
           </button>
           <button onclick="navigate('farmer-dashboard', 'requests')" class="relative nav-item px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center space-x-1">
-            <span>My Requests</span>
+            <span data-i18n="navigation.myRequests">My Requests</span>
             <span id="nav-farmer-pending-badge" class="hidden ml-1.5 px-1.5 py-0.2 text-xs font-bold rounded-full bg-amber-500 text-white">0</span>
           </button>
         </div>
@@ -93,18 +94,23 @@
 
       <!-- Auth Controls / Profile Area -->
       <div class="flex items-center space-x-2.5">
+        <label class="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] text-slate-600 shadow-sm">
+          <span data-i18n="common.language">Language</span>
+          <select id="language-selector" class="bg-transparent text-slate-700 focus:outline-none" aria-label="Language"></select>
+        </label>
+
         <!-- Live Status Indicator -->
         <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] text-slate-600 font-medium" title="Real-time WebSocket connection">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="ws-status">Live Sync</span>
+          <span id="ws-status" data-i18n="common.liveSync">Live Sync</span>
         </div>
 
         <!-- Guest auth buttons -->
         <div id="guest-controls" class="flex items-center space-x-2">
-          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-slate-100 rounded-lg transition">
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 text-sm font-semibold text-slate-700 hover:text-brand-700 hover:bg-slate-100 rounded-lg transition" data-i18n="common.login">
             Login
           </button>
-          <button onclick="openAuthModal('register')" class="px-3.5 py-1.5 text-sm font-semibold text-white bg-brand-700 hover:bg-brand-800 rounded-lg shadow-sm transition">
+          <button onclick="openAuthModal('register')" class="px-3.5 py-1.5 text-sm font-semibold text-white bg-brand-700 hover:bg-brand-800 rounded-lg shadow-sm transition" data-i18n="common.register">
             Register
           </button>
         </div>
@@ -120,7 +126,7 @@
               <div id="nav-user-role" class="text-slate-500 font-medium uppercase text-[10px]">Role</div>
             </div>
           </button>
-          <button onclick="logout()" title="Logout" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+          <button onclick="logout()" title="Logout" data-i18n-title="common.logout" data-i18n-aria="common.logout" aria-label="Logout" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </button>
         </div>
@@ -141,27 +147,27 @@
         <div class="relative z-10 max-w-3xl space-y-6">
           <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-700/40 border border-emerald-400/30 text-emerald-200 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-300"></i>
-            <span>Verified Local Produce Platform</span>
+            <span data-i18n="landing.verifiedPlatform">Verified Local Produce Platform</span>
           </div>
-          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight" data-i18n="landing.title">
             Discover. Verify. Connect.
           </h1>
-          <p class="text-base sm:text-lg text-emerald-100/90 leading-relaxed font-normal">
+          <p class="text-base sm:text-lg text-emerald-100/90 leading-relaxed font-normal" data-i18n="landing.subtitle">
             AgriFlow helps farmers and agriculture officers maintain verified local agricultural produce information, making it easier for buyers to discover available produce by location, crop, and quantity.
           </p>
 
           <div class="flex flex-wrap gap-3 pt-2">
             <button onclick="navigate('produce')" class="px-6 py-3 rounded-xl bg-white text-brand-900 font-bold text-sm sm:text-base hover:bg-emerald-50 transition shadow-lg flex items-center space-x-2">
               <i data-lucide="search" class="w-5 h-5 text-brand-700"></i>
-              <span>Search Verified Produce</span>
+              <span data-i18n="landing.searchVerifiedProduce">Search Verified Produce</span>
             </button>
             <button onclick="openAuthModal('login', 'OFFICER')" class="px-5 py-3 rounded-xl bg-emerald-700/50 border border-emerald-400/40 text-white font-semibold text-sm sm:text-base hover:bg-emerald-700/70 transition flex items-center space-x-2">
               <i data-lucide="building-2" class="w-5 h-5"></i>
-              <span>Officer Portal</span>
+              <span data-i18n="navigation.officerPortal">Officer Portal</span>
             </button>
             <button onclick="openAuthModal('login', 'FARMER')" class="px-5 py-3 rounded-xl bg-emerald-700/50 border border-emerald-400/40 text-white font-semibold text-sm sm:text-base hover:bg-emerald-700/70 transition flex items-center space-x-2">
               <i data-lucide="tractor" class="w-5 h-5"></i>
-              <span>Farmer Portal</span>
+              <span data-i18n="navigation.farmerPortal">Farmer Portal</span>
             </button>
           </div>
         </div>
@@ -177,34 +183,34 @@
       <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
         <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center space-x-2">
           <i data-lucide="sparkles" class="w-5 h-5 text-brand-700"></i>
-          <span>Quick Produce Discovery by Area</span>
+          <span data-i18n="landing.quickDiscovery">Quick Produce Discovery by Area</span>
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-500 mb-1">Crop Name</label>
+            <label class="block text-xs font-semibold text-slate-500 mb-1" data-i18n="landing.cropName">Crop Name</label>
             <div class="relative">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-              <input type="text" id="landing-crop-input" placeholder="e.g. Onion, Tomato..." class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <input type="text" id="landing-crop-input" data-i18n-placeholder="landing.cropPlaceholder" placeholder="e.g. Onion, Tomato..." class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-500 mb-1">State</label>
+            <label class="block text-xs font-semibold text-slate-500 mb-1" data-i18n="landing.state">State</label>
             <select id="landing-state-select" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="All">All States</option>
+              <option value="All" data-i18n="common.allStates">All States</option>
               <option value="Tamil Nadu" selected>Tamil Nadu</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-500 mb-1">District</label>
+            <label class="block text-xs font-semibold text-slate-500 mb-1" data-i18n="landing.district">District</label>
             <select id="landing-district-select" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="All">All Districts</option>
+              <option value="All" data-i18n="common.allDistricts">All Districts</option>
               <option value="Salem" selected>Salem</option>
             </select>
           </div>
           <div class="flex items-end">
             <button onclick="triggerLandingSearch()" class="w-full py-2 px-4 rounded-lg bg-brand-700 text-white font-semibold text-sm hover:bg-brand-800 transition flex items-center justify-center space-x-1.5 shadow-sm">
               <i data-lucide="search" class="w-4 h-4"></i>
-              <span>Find Verified Produce</span>
+              <span data-i18n="landing.findVerifiedProduce">Find Verified Produce</span>
             </button>
           </div>
         </div>
@@ -213,8 +219,8 @@
       <!-- How It Works Section -->
       <div class="space-y-6">
         <div class="text-center max-w-2xl mx-auto">
-          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">How AgriFlow Works</h2>
-          <p class="text-sm text-slate-500 mt-2">A simple, transparent, and location-grounded verification workflow connecting local agriculture to open markets.</p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900" data-i18n="landing.howItWorks">How AgriFlow Works</h2>
+          <p class="text-sm text-slate-500 mt-2" data-i18n="landing.workflowIntro">A simple, transparent, and location-grounded verification workflow connecting local agriculture to open markets.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -222,8 +228,8 @@
             <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 font-bold flex items-center justify-center mb-4 text-base">
               1
             </div>
-            <h3 class="text-base font-bold text-slate-900 mb-2">Farmer Submission</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="howItWorks.farmerSubmission">Farmer Submission</h3>
+            <p class="text-sm text-slate-600 leading-relaxed" data-i18n="howItWorks.farmerSubmissionDesc">
               Farmers record their active cultivation details, land size, expected yield, and harvest dates. Submissions are tagged with their specific village and area.
             </p>
           </div>
@@ -232,8 +238,8 @@
             <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-800 font-bold flex items-center justify-center mb-4 text-base">
               2
             </div>
-            <h3 class="text-base font-bold text-slate-900 mb-2">Officer Verification</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="howItWorks.officerVerification">Officer Verification</h3>
+            <p class="text-sm text-slate-600 leading-relaxed" data-i18n="howItWorks.officerVerificationDesc">
               Local Agriculture Officers review incoming farmer submissions in their assigned jurisdiction. Officers directly inspect, verify, or reject submissions with feedback.
             </p>
           </div>
@@ -242,8 +248,8 @@
             <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 font-bold flex items-center justify-center mb-4 text-base">
               3
             </div>
-            <h3 class="text-base font-bold text-slate-900 mb-2">Public Discovery & Contact</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="howItWorks.publicDiscovery">Public Discovery & Contact</h3>
+            <p class="text-sm text-slate-600 leading-relaxed" data-i18n="howItWorks.publicDiscoveryDesc">
               Buyers easily discover verified produce by crop, district, and area. They can review quality grades and send controlled purchase inquiries without complex logins.
             </p>
           </div>
@@ -255,21 +261,21 @@
         <div class="bg-gradient-to-b from-white to-emerald-50/50 p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-3">
           <div class="inline-flex items-center space-x-1.5 text-xs font-bold text-emerald-800 uppercase px-2.5 py-1 rounded-full bg-emerald-100">
             <i data-lucide="tractor" class="w-3.5 h-3.5"></i>
-            <span>For Farmers</span>
+            <span data-i18n="roles.farmers">For Farmers</span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Direct Visibility for Harvests</h3>
+          <h3 class="text-lg font-bold text-slate-900" data-i18n="roles.farmerTitle">Direct Visibility for Harvests</h3>
           <ul class="space-y-2 text-sm text-slate-600">
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
-              <span>Register farming profiles and cultivated lands</span>
+              <span data-i18n="roles.farmerItem1">Register farming profiles and cultivated lands</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
-              <span>Submit upcoming harvest yields for local verification</span>
+              <span data-i18n="roles.farmerItem2">Submit upcoming harvest yields for local verification</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
-              <span>Track real-time status: Pending → Verified / Rejected</span>
+              <span data-i18n="roles.farmerItem3">Track real-time status: Pending → Verified / Rejected</span>
             </li>
           </ul>
         </div>
@@ -277,21 +283,21 @@
         <div class="bg-gradient-to-b from-white to-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm space-y-3">
           <div class="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-800 uppercase px-2.5 py-1 rounded-full bg-blue-100">
             <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-            <span>For Agriculture Officers</span>
+            <span data-i18n="roles.officers">For Agriculture Officers</span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Jurisdiction Control & Trust</h3>
+          <h3 class="text-lg font-bold text-slate-900" data-i18n="roles.officerTitle">Jurisdiction Control & Trust</h3>
           <ul class="space-y-2 text-sm text-slate-600">
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-              <span>Directly add verified local area agricultural produce</span>
+              <span data-i18n="roles.officerItem1">Directly add verified local area agricultural produce</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-              <span>Review and field-verify farmer requests in your block</span>
+              <span data-i18n="roles.officerItem2">Review and field-verify farmer requests in your block</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-              <span>Update quantities, availability, and mark unavailable</span>
+              <span data-i18n="roles.officerItem3">Update quantities, availability, and mark unavailable</span>
             </li>
           </ul>
         </div>
@@ -299,21 +305,21 @@
         <div class="bg-gradient-to-b from-white to-amber-50/50 p-6 rounded-2xl border border-amber-100 shadow-sm space-y-3">
           <div class="inline-flex items-center space-x-1.5 text-xs font-bold text-amber-800 uppercase px-2.5 py-1 rounded-full bg-amber-100">
             <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-            <span>For Buyers & Traders</span>
+            <span data-i18n="roles.buyers">For Buyers & Traders</span>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Verified Supply Discovery</h3>
+          <h3 class="text-lg font-bold text-slate-900" data-i18n="roles.buyerTitle">Verified Supply Discovery</h3>
           <ul class="space-y-2 text-sm text-slate-600">
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-              <span>Discover produce with zero login barriers</span>
+              <span data-i18n="roles.buyerItem1">Discover produce with zero login barriers</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-              <span>Filter by State, District, Area, and Volume</span>
+              <span data-i18n="roles.buyerItem2">Filter by State, District, Area, and Volume</span>
             </li>
             <li class="flex items-start space-x-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-              <span>Send direct purchase inquiries to verified suppliers</span>
+              <span data-i18n="roles.buyerItem3">Send direct purchase inquiries to verified suppliers</span>
             </li>
           </ul>
         </div>
@@ -326,14 +332,14 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center space-x-2">
-            <span>🔎 Verified Produce Discovery</span>
+            <span data-i18n="produce.title">🔎 Verified Produce Discovery</span>
           </h1>
-          <p class="text-sm text-slate-500 mt-1">Discover available and upcoming agricultural produce verified by local Agriculture Officers.</p>
+          <p class="text-sm text-slate-500 mt-1" data-i18n="produce.subtitle">Discover available and upcoming agricultural produce verified by local Agriculture Officers.</p>
         </div>
         <div class="flex items-center space-x-2">
           <button onclick="loadProduceList()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 flex items-center space-x-1.5 shadow-sm">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span>Refresh</span>
+            <span data-i18n="common.refresh">Refresh</span>
           </button>
         </div>
       </div>
@@ -343,34 +349,34 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Crop Search -->
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Search Crop Name</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-i18n="produce.searchCropName">Search Crop Name</label>
             <div class="relative">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-              <input type="text" id="filter-crop" oninput="debounceProduceSearch()" placeholder="e.g. Onion, Tomato..." class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <input type="text" id="filter-crop" oninput="debounceProduceSearch()" placeholder="e.g. Onion, Tomato..." data-i18n-placeholder="landing.cropPlaceholder" class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
           </div>
 
           <!-- State Filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">State</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-i18n="produce.state">State</label>
             <select id="filter-state" onchange="onStateFilterChange()" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="All">All States</option>
+              <option value="All" data-i18n="common.allStates">All States</option>
             </select>
           </div>
 
           <!-- District Filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">District</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-i18n="produce.district">District</label>
             <select id="filter-district" onchange="onDistrictFilterChange()" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="All">All Districts</option>
+              <option value="All" data-i18n="common.allDistricts">All Districts</option>
             </select>
           </div>
 
           <!-- Area Filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Area / Block</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-i18n="produce.areaBlock">Area / Block</label>
             <select id="filter-area" onchange="loadProduceList()" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="All">All Areas</option>
+              <option value="All" data-i18n="common.allAreas">All Areas</option>
             </select>
           </div>
         </div>
@@ -380,18 +386,18 @@
           <!-- Quantity Range -->
           <div class="flex items-center space-x-2">
             <div class="w-1/2">
-              <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Min Qty (Tons)</label>
+              <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="produce.minQty">Min Qty (Tons)</label>
               <input type="number" id="filter-min-qty" onchange="loadProduceList()" placeholder="0" min="0" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
             </div>
             <div class="w-1/2">
-              <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Max Qty (Tons)</label>
+              <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="produce.maxQty">Max Qty (Tons)</label>
               <input type="number" id="filter-max-qty" onchange="loadProduceList()" placeholder="100" min="0" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
             </div>
           </div>
 
           <!-- Availability Date -->
           <div>
-            <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Available Before / On</label>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="produce.availBefore">Available Before / On</label>
             <input type="date" id="filter-date" onchange="loadProduceList()" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
           </div>
 
@@ -400,7 +406,7 @@
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="filter-verified-only" onchange="loadProduceList()" checked class="sr-only peer">
               <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600"></div>
-              <span class="ml-2 text-xs font-bold text-slate-700">Verified Only (Recommended)</span>
+              <span class="ml-2 text-xs font-bold text-slate-700" data-i18n="produce.verifiedOnly">Verified Only (Recommended)</span>
             </label>
           </div>
 
@@ -408,7 +414,7 @@
           <div class="flex justify-end pt-3">
             <button onclick="resetProduceFilters()" class="text-xs font-semibold text-slate-500 hover:text-brand-700 flex items-center space-x-1">
               <i data-lucide="x" class="w-3.5 h-3.5"></i>
-              <span>Clear Filters</span>
+              <span data-i18n="produce.clearFilters">Clear Filters</span>
             </button>
           </div>
         </div>
@@ -417,7 +423,7 @@
       <!-- Results Count & Active Tags -->
       <div class="flex items-center justify-between text-xs text-slate-500 px-1">
         <span id="produce-count-text">Loading verified produce records...</span>
-        <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">Auto-synced via WebSocket</span>
+        <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium" data-i18n="produce.autoSynced">Auto-synced via WebSocket</span>
       </div>
 
       <!-- Results Produce Grid -->
@@ -430,9 +436,9 @@
         <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
           <i data-lucide="inbox" class="w-8 h-8"></i>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Produce Records Found</h3>
-        <p class="text-xs text-slate-500 max-w-sm mx-auto">Try broadening your search or clearing filters to discover other available crops across nearby areas.</p>
-        <button onclick="resetProduceFilters()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition">Reset All Filters</button>
+        <h3 class="text-base font-bold text-slate-800" data-i18n="produce.emptyTitle">No Produce Records Found</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto" data-i18n="produce.emptyDescription">Try broadening your search or clearing filters to discover other available crops across nearby areas.</p>
+        <button onclick="resetProduceFilters()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition" data-i18n="produce.resetAllFilters">Reset All Filters</button>
       </div>
     </section>
 
@@ -443,7 +449,7 @@
         <div>
           <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 text-xs font-semibold mb-2 border border-emerald-500/30">
             <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-            <span>Agriculture Officer Portal</span>
+            <span data-i18n="officer.portal">Agriculture Officer Portal</span>
           </div>
           <h1 id="officer-dash-name" class="text-2xl sm:text-3xl font-extrabold">Ravi Kumar</h1>
           <p id="officer-dash-details" class="text-xs sm:text-sm text-emerald-100/80 mt-1">
@@ -453,9 +459,9 @@
         <div class="flex items-center space-x-2.5">
           <button onclick="openModal('add-produce-modal')" class="px-4 py-2.5 rounded-xl bg-white text-emerald-900 font-bold text-xs sm:text-sm hover:bg-emerald-50 transition shadow flex items-center space-x-2">
             <i data-lucide="plus" class="w-4 h-4 text-emerald-700"></i>
-            <span>+ Add Produce</span>
+            <span data-i18n="officer.addProduce">+ Add Produce</span>
           </button>
-          <button onclick="navigate('profile')" class="px-3 py-2.5 rounded-xl bg-emerald-700/50 border border-emerald-400/30 text-white font-medium text-xs sm:text-sm hover:bg-emerald-700 transition">
+          <button onclick="navigate('profile')" class="px-3 py-2.5 rounded-xl bg-emerald-700/50 border border-emerald-400/30 text-white font-medium text-xs sm:text-sm hover:bg-emerald-700 transition" data-i18n="officer.profile">
             Edit Profile
           </button>
         </div>
@@ -465,49 +471,49 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Records</span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="officer.totalRecords">Total Records</span>
             <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
               <i data-lucide="layers" class="w-4 h-4"></i>
             </div>
           </div>
           <div id="stat-officer-records" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">In your assigned area</span>
+          <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="officer.totalRecordsHint">In your assigned area</span>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Available Quantity</span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="officer.availableQty">Available Quantity</span>
             <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center">
               <i data-lucide="scale" class="w-4 h-4"></i>
             </div>
           </div>
           <div class="flex items-baseline space-x-1.5 mt-2">
             <span id="stat-officer-quantity" class="text-2xl sm:text-3xl font-extrabold text-slate-900">0</span>
-            <span class="text-xs font-bold text-slate-500">Tons</span>
+            <span class="text-xs font-bold text-slate-500" data-i18n="units.tons">Tons</span>
           </div>
-          <span class="text-[11px] text-slate-500 mt-1 block">Verified local produce</span>
+          <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="officer.availableQtyHint">Verified local produce</span>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Farmer Requests</span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="officer.farmerRequests">Farmer Requests</span>
             <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
               <i data-lucide="clock" class="w-4 h-4"></i>
             </div>
           </div>
           <div id="stat-officer-pending" class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-2">0</div>
-          <span class="text-[11px] text-amber-700 font-medium mt-1 block">Pending field verification</span>
+          <span class="text-[11px] text-amber-700 font-medium mt-1 block" data-i18n="officer.pendingHint">Pending field verification</span>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Verified Records</span>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="officer.verifiedRecords">Verified Records</span>
             <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center">
               <i data-lucide="check-check" class="w-4 h-4"></i>
             </div>
           </div>
           <div id="stat-officer-verified" class="text-2xl sm:text-3xl font-extrabold text-blue-700 mt-2">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">Published to buyers</span>
+          <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="officer.verifiedRecordsHint">Published to buyers</span>
         </div>
       </div>
 
@@ -519,11 +525,11 @@
               <i data-lucide="clipboard-check" class="w-4 h-4"></i>
             </div>
             <div>
-              <h2 class="text-lg font-bold text-slate-900">Farmer Verification Requests</h2>
-              <p class="text-xs text-slate-500">Farmers in your assigned area awaiting your field verification</p>
+              <h2 class="text-lg font-bold text-slate-900" data-i18n="officer.queueTitle">Farmer Verification Requests</h2>
+              <p class="text-xs text-slate-500" data-i18n="officer.queueSubtitle">Farmers in your assigned area awaiting your field verification</p>
             </div>
           </div>
-          <button onclick="loadOfficerDashboard()" class="text-xs font-semibold text-brand-700 hover:underline">Refresh Requests</button>
+          <button onclick="loadOfficerDashboard()" class="text-xs font-semibold text-brand-700 hover:underline" data-i18n="officer.refreshRequests">Refresh Requests</button>
         </div>
 
         <div id="officer-requests-list" class="space-y-3">
@@ -532,8 +538,8 @@
 
         <div id="officer-requests-empty" class="hidden text-center py-8 text-slate-400">
           <i data-lucide="check-circle" class="w-8 h-8 mx-auto mb-2 text-emerald-500"></i>
-          <p class="text-sm font-semibold text-slate-700">All caught up!</p>
-          <p class="text-xs text-slate-500">No pending farmer submissions in your area.</p>
+          <p class="text-sm font-semibold text-slate-700" data-i18n="officer.queueEmpty">All caught up!</p>
+          <p class="text-xs text-slate-500" data-i18n="officer.queueEmptyDesc">No pending farmer submissions in your area.</p>
         </div>
       </div>
 
@@ -541,12 +547,12 @@
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
           <div>
-            <h2 class="text-lg font-bold text-slate-900">Local Area Agricultural Produce</h2>
-            <p class="text-xs text-slate-500">Produce records maintained and published for your jurisdiction</p>
+            <h2 class="text-lg font-bold text-slate-900" data-i18n="officer.localProduceTitle">Local Area Agricultural Produce</h2>
+            <p class="text-xs text-slate-500" data-i18n="officer.localProduceSubtitle">Produce records maintained and published for your jurisdiction</p>
           </div>
           <button onclick="openModal('add-produce-modal')" class="px-3 py-1.5 rounded-lg bg-brand-700 text-white text-xs font-bold hover:bg-brand-800 transition flex items-center space-x-1">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>+ Add Produce</span>
+            <span data-i18n="officer.addProduce">+ Add Produce</span>
           </button>
         </div>
 
@@ -555,14 +561,15 @@
           <table class="min-w-full divide-y divide-slate-200 text-xs sm:text-sm">
             <thead>
               <tr class="text-left text-slate-500 font-bold uppercase tracking-wider text-[11px] bg-slate-50">
-                <th class="py-3 px-4 rounded-l-lg">Crop</th>
-                <th class="py-3 px-4">Available Quantity</th>
-                <th class="py-3 px-4">Location</th>
-                <th class="py-3 px-4">Availability Date</th>
-                <th class="py-3 px-4">Quality Grade</th>
-                <th class="py-3 px-4">Source Type</th>
-                <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4 text-right rounded-r-lg">Actions</th>
+                <th class="py-3 px-4 rounded-l-lg" data-i18n="officer.cropCol">Crop</th>
+                <th class="py-3 px-4" data-i18n="officer.qtyCol">Available Quantity</th>
+                <th class="py-3 px-4" data-i18n="officer.priceCol">Price</th>
+                <th class="py-3 px-4" data-i18n="officer.locationCol">Location</th>
+                <th class="py-3 px-4" data-i18n="officer.availDateCol">Availability Date</th>
+                <th class="py-3 px-4" data-i18n="officer.qualityCol">Quality Grade</th>
+                <th class="py-3 px-4" data-i18n="officer.sourceCol">Source Type</th>
+                <th class="py-3 px-4" data-i18n="officer.statusCol">Status</th>
+                <th class="py-3 px-4 text-right rounded-r-lg" data-i18n="officer.actionsCol">Actions</th>
               </tr>
             </thead>
             <tbody id="officer-produce-table-body" class="divide-y divide-slate-100">
@@ -580,7 +587,7 @@
         <div>
           <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-700/60 text-emerald-200 text-xs font-semibold mb-2 border border-emerald-500/30">
             <i data-lucide="tractor" class="w-3.5 h-3.5"></i>
-            <span>Farmer Portal</span>
+            <span data-i18n="farmer.portal">Farmer Portal</span>
           </div>
           <h1 id="farmer-dash-name" class="text-2xl sm:text-3xl font-extrabold">Kumar</h1>
           <p id="farmer-dash-details" class="text-xs sm:text-sm text-emerald-100/80 mt-1">
@@ -590,9 +597,9 @@
         <div class="flex items-center space-x-2.5">
           <button onclick="openModal('add-crop-modal')" class="px-4 py-2.5 rounded-xl bg-white text-emerald-900 font-bold text-xs sm:text-sm hover:bg-emerald-50 transition shadow flex items-center space-x-2">
             <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-700"></i>
-            <span>+ Add Crop Details</span>
+            <span data-i18n="farmer.addCrop">+ Add Crop Details</span>
           </button>
-          <button onclick="navigate('profile')" class="px-3 py-2.5 rounded-xl bg-emerald-700/50 border border-emerald-400/30 text-white font-medium text-xs sm:text-sm hover:bg-emerald-700 transition">
+          <button onclick="navigate('profile')" class="px-3 py-2.5 rounded-xl bg-emerald-700/50 border border-emerald-400/30 text-white font-medium text-xs sm:text-sm hover:bg-emerald-700 transition" data-i18n="farmer.myProfile">
             My Farming Profile
           </button>
         </div>
@@ -605,12 +612,12 @@
             <i data-lucide="user-check" class="w-5 h-5"></i>
           </div>
           <div>
-            <span class="text-[11px] uppercase font-bold text-blue-800 tracking-wider">Your Assigned Local Agriculture Officer</span>
+            <span class="text-[11px] uppercase font-bold text-blue-800 tracking-wider" data-i18n="farmer.assignedOfficer">Your Assigned Local Agriculture Officer</span>
             <div id="assigned-officer-name" class="font-bold text-slate-900 text-sm sm:text-base">Ravi Kumar (Assistant Agricultural Officer)</div>
             <div id="assigned-officer-contact" class="text-xs text-slate-600">Jurisdiction: Sankari Block, Salem | Contact: +91 98765 43210</div>
           </div>
         </div>
-        <div class="text-xs text-blue-700 font-medium bg-blue-100/60 px-3 py-1.5 rounded-lg border border-blue-200">
+        <div class="text-xs text-blue-700 font-medium bg-blue-100/60 px-3 py-1.5 rounded-lg border border-blue-200" data-i18n="farmer.verifiedRoute">
           ✓ Verified Submissions Route Here
         </div>
       </div>
@@ -618,24 +625,24 @@
       <!-- Farmer Stats Cards -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Submissions</span>
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="farmer.totalSubmissions">Total Submissions</span>
           <div id="stat-farmer-total" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">0</div>
-          <span class="text-[11px] text-slate-500 mt-1 block">Crop records</span>
+          <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="farmer.cropRecords">Crop records</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</span>
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="status.Pending">Pending</span>
           <div id="stat-farmer-pending" class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-2">0</div>
-          <span class="text-[11px] text-amber-700 font-medium mt-1 block">Awaiting officer review</span>
+          <span class="text-[11px] text-amber-700 font-medium mt-1 block" data-i18n="farmer.pendingReview">Awaiting officer review</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Verified & Active</span>
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="farmer.verified">Verified & Active</span>
           <div id="stat-farmer-verified" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-2">0</div>
-          <span class="text-[11px] text-emerald-700 font-medium mt-1 block">Visible to buyers</span>
+          <span class="text-[11px] text-emerald-700 font-medium mt-1 block" data-i18n="farmer.visibleToBuyers">Visible to buyers</span>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Rejected</span>
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="status.Rejected">Rejected</span>
           <div id="stat-farmer-rejected" class="text-2xl sm:text-3xl font-extrabold text-red-600 mt-2">0</div>
-          <span class="text-[11px] text-red-700 font-medium mt-1 block">Needs revision</span>
+          <span class="text-[11px] text-red-700 font-medium mt-1 block" data-i18n="farmer.needsRevision">Needs revision</span>
         </div>
       </div>
 
@@ -643,12 +650,12 @@
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
           <div>
-            <h2 class="text-lg font-bold text-slate-900">My Crop Verification Requests</h2>
-            <p class="text-xs text-slate-500">Track verification status from your local Agriculture Officer</p>
+            <h2 class="text-lg font-bold text-slate-900" data-i18n="farmer.requestsTitle">My Crop Verification Requests</h2>
+            <p class="text-xs text-slate-500" data-i18n="farmer.requestsSubtitle">Track verification status from your local Agriculture Officer</p>
           </div>
           <button onclick="openModal('add-crop-modal')" class="px-3 py-1.5 rounded-lg bg-brand-700 text-white text-xs font-bold hover:bg-brand-800 transition flex items-center space-x-1">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>+ Add Crop</span>
+            <span data-i18n="farmer.addCropButton">+ Add Crop</span>
           </button>
         </div>
 
@@ -658,9 +665,9 @@
 
         <div id="farmer-requests-empty" class="hidden text-center py-12 text-slate-400">
           <i data-lucide="sprout" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
-          <p class="text-sm font-semibold text-slate-700">No crops submitted yet</p>
-          <p class="text-xs text-slate-500 mb-3">Add your current cultivation details to request local verification.</p>
-          <button onclick="openModal('add-crop-modal')" class="px-4 py-2 rounded-lg bg-brand-700 text-white text-xs font-bold hover:bg-brand-800 transition">Add First Crop</button>
+          <p class="text-sm font-semibold text-slate-700" data-i18n="farmer.noCrops">No crops submitted yet</p>
+          <p class="text-xs text-slate-500 mb-3" data-i18n="farmer.noCropsDescription">Add your current cultivation details to request local verification.</p>
+          <button onclick="openModal('add-crop-modal')" class="px-4 py-2 rounded-lg bg-brand-700 text-white text-xs font-bold hover:bg-brand-800 transition" data-i18n="farmer.addFirstCrop">Add First Crop</button>
         </div>
       </div>
     </section>
@@ -669,8 +676,8 @@
     <section id="view-profile" class="spa-view hidden animate-fade-in max-w-2xl mx-auto space-y-6">
       <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
         <div class="border-b border-slate-100 pb-4">
-          <h2 class="text-xl font-bold text-slate-900">My Profile</h2>
-          <p class="text-xs text-slate-500 mt-1">Manage your account information and jurisdictional/farming details</p>
+          <h2 class="text-xl font-bold text-slate-900" data-i18n="profile.title">My Profile</h2>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="profile.subtitle">Manage your account information and jurisdictional/farming details</p>
         </div>
 
         <form id="profile-form" onsubmit="saveUserProfile(event)" class="space-y-4">
@@ -678,8 +685,8 @@
           <div id="profile-fields-container" class="space-y-4"></div>
 
           <div class="pt-4 border-t border-slate-100 flex justify-end space-x-2">
-            <button type="button" onclick="navigate('dashboard')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Cancel</button>
-            <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm">Save Profile Changes</button>
+            <button type="button" onclick="navigate('dashboard')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50" data-i18n="common.cancel">Cancel</button>
+            <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="profile.saveChanges">Save Profile Changes</button>
           </div>
         </form>
       </div>
@@ -690,25 +697,25 @@
       <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
         <!-- Auth Switch Tabs -->
         <div class="flex border-b border-slate-200">
-          <button type="button" id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-center text-sm font-bold border-b-2 border-brand-700 text-brand-700 transition">
+          <button type="button" id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-center text-sm font-bold border-b-2 border-brand-700 text-brand-700 transition" data-i18n="auth.loginTab">
             Login
           </button>
-          <button type="button" id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2.5 text-center text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">
+          <button type="button" id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2.5 text-center text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition" data-i18n="auth.registerTab">
             Register
           </button>
         </div>
 
         <!-- Role Selector Pills -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Select Your Role</label>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-2" data-i18n="auth.selectRole">Select Your Role</label>
           <div class="grid grid-cols-2 gap-2">
             <button type="button" id="role-btn-officer" onclick="setAuthRole('OFFICER')" class="p-3 rounded-xl border-2 border-brand-700 bg-brand-50/50 text-brand-800 font-bold text-xs flex flex-col items-center space-y-1 transition">
               <i data-lucide="building-2" class="w-5 h-5 text-brand-700"></i>
-              <span>Agriculture Officer</span>
+              <span data-i18n="roles.officer">Agriculture Officer</span>
             </button>
             <button type="button" id="role-btn-farmer" onclick="setAuthRole('FARMER')" class="p-3 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-semibold text-xs flex flex-col items-center space-y-1 hover:border-slate-300 transition">
               <i data-lucide="tractor" class="w-5 h-5 text-slate-500"></i>
-              <span>Farmer</span>
+              <span data-i18n="roles.farmer">Farmer</span>
             </button>
           </div>
         </div>
@@ -716,14 +723,14 @@
         <!-- Login Form -->
         <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Mobile Number or Email</label>
-            <input type="text" id="login-identifier" required placeholder="e.g. 9876543210 or email" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.identifier">Mobile Number or Email</label>
+            <input type="text" id="login-identifier" required placeholder="e.g. 9876543210 or email" data-i18n-placeholder="auth.identifierPlaceholder" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.password">Password</label>
             <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
-          <button type="submit" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm">
+          <button type="submit" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.signIn">
             Sign In
           </button>
         </form>
@@ -731,21 +738,21 @@
         <!-- Register Form -->
         <form id="form-register" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
-            <input type="text" id="reg-name" required placeholder="e.g. Ravi Kumar" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.fullName">Full Name</label>
+            <input type="text" id="reg-name" required placeholder="e.g. Ravi Kumar" data-i18n-placeholder="auth.fullNamePlaceholder" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Mobile Number</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.mobileNumber">Mobile Number</label>
               <input type="tel" id="reg-phone" required placeholder="9876543210" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Email (Optional)</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.emailOptional">Email (Optional)</label>
               <input type="email" id="reg-email" placeholder="name@domain.com" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.password">Password</label>
             <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
 
@@ -753,25 +760,25 @@
           <div id="reg-officer-fields" class="space-y-2 pt-1 border-t border-slate-100">
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Designation</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.designation">Designation</label>
                 <input type="text" id="reg-designation" value="Assistant Agricultural Officer" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Department</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.department">Department</label>
                 <input type="text" id="reg-department" value="Dept of Agriculture" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Assigned Area</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.assignedArea">Assigned Area</label>
                 <input type="text" id="reg-assigned-area" value="Sankari" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">District</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="common.district">District</label>
                 <input type="text" id="reg-district" value="Salem" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">State</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="common.state">State</label>
                 <input type="text" id="reg-state" value="Tamil Nadu" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
             </div>
@@ -781,39 +788,39 @@
           <div id="reg-farmer-fields" class="hidden space-y-2 pt-1 border-t border-slate-100">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Village</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.village">Village</label>
                 <input type="text" id="reg-f-village" value="Sankari West" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Area</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="common.area">Area</label>
                 <input type="text" id="reg-f-area" value="Sankari" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">District</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="common.district">District</label>
                 <input type="text" id="reg-f-district" value="Salem" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">State</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="common.state">State</label>
                 <input type="text" id="reg-f-state" value="Tamil Nadu" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Land Area (Acres)</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.landArea">Land Area (Acres)</label>
                 <input type="number" id="reg-f-land" value="2" step="0.5" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Farming Type</label>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-0.5" data-i18n="auth.farmingType">Farming Type</label>
                 <select id="reg-f-farming-type" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 bg-white">
-                  <option value="Conventional">Conventional</option>
-                  <option value="Organic">Organic</option>
-                  <option value="Natural Farming">Natural Farming</option>
+                  <option value="Conventional" data-i18n="auth.conventional">Conventional</option>
+                  <option value="Organic" data-i18n="auth.organic">Organic</option>
+                  <option value="Natural Farming" data-i18n="auth.naturalFarming">Natural Farming</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <button type="submit" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm">
+          <button type="submit" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.createAccount">
             Create Account
           </button>
         </form>
@@ -829,8 +836,8 @@
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <h3 id="produce-modal-title" class="text-lg font-bold text-slate-900">+ Add Local Produce</h3>
-          <p class="text-xs text-slate-500">Produce entered directly by Agriculture Officer will be marked as <strong class="text-emerald-700">✓ Verified</strong></p>
+          <h3 id="produce-modal-title" class="text-lg font-bold text-slate-900" data-i18n="officer.addProduceModalTitle">+ Add Local Produce</h3>
+          <p class="text-xs text-slate-500" data-i18n="officer.modalSubtitle">Produce entered directly by Agriculture Officer will be marked as <strong class="text-emerald-700">✓ Verified</strong></p>
         </div>
         <button onclick="closeModal('add-produce-modal')" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -841,48 +848,69 @@
         <input type="hidden" id="officer-produce-edit-id" value="">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Crop Name *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="officer.cropCol">Crop Name *</label>
             <input type="text" id="op-crop" required placeholder="e.g. Onion" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Produce Type</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.category">Produce Type</label>
             <input type="text" id="op-type" placeholder="e.g. Vegetables / Bulbs" value="Field Crop" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Available Quantity *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.availableQuantity">Available Quantity *</label>
             <input type="number" id="op-qty" required step="0.1" min="0.1" placeholder="15" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Unit *</label>
-            <select id="op-unit" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="Tons" selected>Tons</option>
-              <option value="Quintals">Quintals</option>
-              <option value="kg">kg</option>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.unitLabel">Unit *</label>
+            <select id="op-unit" onchange="updatePriceUnitLabel()" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
+              <option value="Tons" selected data-i18n="units.tons">Tons</option>
+              <option value="Quintals" data-i18n="units.quintals">Quintals</option>
+              <option value="kg" data-i18n="units.kg">kg</option>
             </select>
           </div>
         </div>
 
+        <!-- Price Field -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">
+            <span data-i18n="produce.price">Price</span>
+            <span id="op-price-unit-hint" class="text-slate-500 font-normal ml-1">(₹ / Ton)</span>
+          </label>
+          <div class="relative rounded-lg shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-slate-500 font-bold text-sm">₹</span>
+            </div>
+            <input type="number" id="op-price" min="0" step="any"
+              placeholder="Enter price per unit"
+              data-i18n-placeholder="produce.enterPrice"
+              class="w-full pl-8 pr-28 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span id="op-price-unit-tag" class="text-xs font-semibold text-slate-500">/ Ton</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1" id="op-price-dynamic-desc">Price per Ton (e.g. ₹ 25,000 / Ton)</p>
+        </div>
+
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Area / Block *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="common.area">Area / Block *</label>
             <input type="text" id="op-area" required value="Sankari" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">District *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="common.district">District *</label>
             <input type="text" id="op-district" required value="Salem" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">State *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="common.state">State *</label>
             <input type="text" id="op-state" required value="Tamil Nadu" class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Quality / Grade</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.qualityGrade">Quality / Grade</label>
             <select id="op-quality" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
               <option value="Grade A" selected>Grade A (Premium)</option>
               <option value="Grade B">Grade B (Standard)</option>
@@ -890,19 +918,19 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Availability Date *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.availability">Availability Date *</label>
             <input type="date" id="op-avail-date" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Additional Notes</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="common.notes">Additional Notes</label>
           <textarea id="op-notes" rows="2" placeholder="Field inspection findings, variety (e.g. Bellary Red), packaging..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
-          <button type="button" onclick="closeModal('add-produce-modal')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm">Save & Publish Produce</button>
+          <button type="button" onclick="closeModal('add-produce-modal')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50" data-i18n="common.cancel">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="officer.savePublish">Save & Publish Produce</button>
         </div>
       </form>
     </div>
@@ -913,8 +941,8 @@
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <h3 class="text-lg font-bold text-slate-900">+ Add Farming Crop Details</h3>
-          <p class="text-xs text-slate-500">Submitted details will be sent to your local Agriculture Officer for verification</p>
+          <h3 class="text-lg font-bold text-slate-900" data-i18n="farmer.addCropButton">+ Add Farming Crop Details</h3>
+          <p class="text-xs text-slate-500" data-i18n="farmer.submittedToOfficer">Submitted details will be sent to your local Agriculture Officer for verification</p>
         </div>
         <button onclick="closeModal('add-crop-modal')" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -924,11 +952,11 @@
       <form id="farmer-crop-form" onsubmit="handleFarmerCropSubmit(event)" class="space-y-3">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Crop Name *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.crop">Crop Name *</label>
             <input type="text" id="fc-crop" required placeholder="e.g. Onion" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Cultivated Area *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="farmer.cultivatedArea">Cultivated Area *</label>
             <div class="flex space-x-1">
               <input type="number" id="fc-area-size" required step="0.5" min="0.1" value="2" class="w-2/3 px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
               <select id="fc-area-unit" class="w-1/3 px-2 py-2 text-xs rounded-lg border border-slate-200 bg-white">
@@ -941,26 +969,26 @@
 
         <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Expected Quantity *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="farmer.expectedQty">Expected Quantity *</label>
             <input type="number" id="fc-expected-qty" required step="0.5" min="0.1" value="5" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Unit *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="produce.unitLabel">Unit *</label>
             <select id="fc-qty-unit" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
-              <option value="Tons" selected>Tons</option>
-              <option value="Quintals">Quintals</option>
-              <option value="kg">kg</option>
+              <option value="Tons" selected data-i18n="units.tons">Tons</option>
+              <option value="Quintals" data-i18n="units.quintals">Quintals</option>
+              <option value="kg" data-i18n="units.kg">kg</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Expected Harvest Date *</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="farmer.expectedHarvest">Expected Harvest Date *</label>
             <input type="date" id="fc-harvest-date" required class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Current Crop Stage</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="farmer.cropStage">Current Crop Stage</label>
             <select id="fc-stage" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white">
               <option value="Bulb Development / Pre-Harvest" selected>Bulb Development</option>
               <option value="Vegetative Stage">Vegetative</option>
@@ -972,31 +1000,31 @@
 
         <!-- Location Fields for Officer Routing -->
         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Location Routing (Routes to Local AAO)</span>
+          <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wide" data-i18n="farmer.locationRouting">Location Routing (Routes to Local AAO)</span>
           <div class="grid grid-cols-3 gap-2">
             <div>
-              <label class="block text-[10px] font-semibold text-slate-500">Area / Block *</label>
+              <label class="block text-[10px] font-semibold text-slate-500" data-i18n="common.area">Area / Block *</label>
               <input type="text" id="fc-area" required value="Sankari" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white">
             </div>
             <div>
-              <label class="block text-[10px] font-semibold text-slate-500">District *</label>
+              <label class="block text-[10px] font-semibold text-slate-500" data-i18n="common.district">District *</label>
               <input type="text" id="fc-district" required value="Salem" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white">
             </div>
             <div>
-              <label class="block text-[10px] font-semibold text-slate-500">State *</label>
+              <label class="block text-[10px] font-semibold text-slate-500" data-i18n="common.state">State *</label>
               <input type="text" id="fc-state" required value="Tamil Nadu" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white">
             </div>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Additional Farming Notes</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="farmer.additionalNotes">Additional Farming Notes</label>
           <textarea id="fc-notes" rows="2" placeholder="Farming methods, irrigation, fertilizer details..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
-          <button type="button" onclick="closeModal('add-crop-modal')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm">Submit to Local Officer</button>
+          <button type="button" onclick="closeModal('add-crop-modal')" class="px-4 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50" data-i18n="common.cancel">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="farmer.submitToOfficer">Submit to Local Officer</button>
         </div>
       </form>
     </div>
@@ -1024,26 +1052,30 @@
       <!-- Produce Metadata Grid -->
       <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200/80">
         <div>
-          <span class="text-slate-400 block text-[11px]">Available Quantity:</span>
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.availableQuantity">Available Quantity:</span>
           <span id="pd-qty" class="font-bold text-slate-900 text-sm">15 Tons</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[11px]">Quality Grade:</span>
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.price">Price:</span>
+          <span id="pd-price" class="font-bold text-amber-700 text-sm">₹ 25,000 / Ton</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.qualityGrade">Quality Grade:</span>
           <span id="pd-quality" class="font-bold text-slate-900 text-sm">Grade A</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[11px]">Availability Date:</span>
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.availability">Availability Date:</span>
           <span id="pd-avail-date" class="font-bold text-slate-900">16 September 2026</span>
         </div>
-        <div>
-          <span class="text-slate-400 block text-[11px]">Verification Source:</span>
+        <div class="col-span-2">
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.verificationSource">Verification Source:</span>
           <span id="pd-source" class="font-bold text-brand-800">Officer Verified</span>
         </div>
       </div>
 
       <!-- Verification / Field Notes -->
       <div class="space-y-1">
-        <span class="text-xs font-bold text-slate-700">Officer Verification & Field Notes:</span>
+        <span class="text-xs font-bold text-slate-700" data-i18n="produce.fieldNotes">Officer Verification & Field Notes:</span>
         <p id="pd-notes" class="text-xs text-slate-600 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100 leading-relaxed italic">
           Verified by local Agriculture Officer upon field verification.
         </p>
@@ -1053,39 +1085,39 @@
       <div class="border-t border-slate-100 pt-4 space-y-3">
         <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
           <i data-lucide="send" class="w-4 h-4 text-brand-700"></i>
-          <span>Send Purchase Inquiry / Procurement Request</span>
+          <span data-i18n="produce.purchaseTitle">Send Purchase Inquiry / Procurement Request</span>
         </h4>
-        <p class="text-xs text-slate-500">Submit your requirement directly to connect with the verified producer / local officer.</p>
+        <p class="text-xs text-slate-500" data-i18n="produce.purchaseSubtitle">Submit your requirement directly to connect with the verified producer / local officer.</p>
 
         <form id="purchase-request-form" onsubmit="handlePurchaseSubmit(event)" class="space-y-3">
           <input type="hidden" id="pr-produce-id" value="">
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Your Name / Company *</label>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5" data-i18n="produce.yourName">Your Name / Company *</label>
               <input type="text" id="pr-name" required placeholder="e.g. Coimbatore Traders" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
             </div>
             <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Contact Number / Email *</label>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5" data-i18n="produce.contact">Contact Number / Email *</label>
               <input type="text" id="pr-contact" required placeholder="+91 94433 22110" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
             </div>
           </div>
           <div class="grid grid-cols-3 gap-2">
             <div class="col-span-2">
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Requested Quantity *</label>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5" data-i18n="produce.requestedQty">Requested Quantity *</label>
               <input type="number" id="pr-qty" required step="0.5" min="0.1" placeholder="5" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
             </div>
             <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Unit</label>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5" data-i18n="produce.unitLabel">Unit</label>
               <input type="text" id="pr-unit" readonly value="Tons" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-500">
             </div>
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Message / Requirements</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5" data-i18n="produce.message">Message / Requirements</label>
             <textarea id="pr-message" rows="2" placeholder="Delivery timeline, transport requirements..." class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
           </div>
           <button type="submit" class="w-full py-2 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center space-x-1.5">
             <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>Send Purchase Request</span>
+            <span data-i18n="produce.sendRequest">Send Purchase Request</span>
           </button>
         </form>
       </div>
@@ -1100,56 +1132,23 @@
           <i data-lucide="alert-circle" class="w-6 h-6"></i>
         </div>
         <div>
-          <h3 class="text-base font-bold text-slate-900">Reject Farmer Request</h3>
-          <p class="text-xs text-slate-500">Please provide a constructive reason for rejection</p>
+          <h3 class="text-base font-bold text-slate-900" data-i18n="officer.rejectTitle">Reject Farmer Request</h3>
+          <p class="text-xs text-slate-500" data-i18n="officer.rejectDescription">Please provide a constructive reason for rejection</p>
         </div>
       </div>
       <input type="hidden" id="reject-request-id" value="">
       <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Rejection Reason / Correction Required *</label>
+        <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="officer.rejectionReason">Rejection Reason / Correction Required *</label>
         <textarea id="reject-comment" required rows="3" placeholder="e.g. Yield estimate does not match cultivated land size; please re-measure." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
       </div>
       <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
-        <button onclick="closeModal('reject-modal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Cancel</button>
-        <button onclick="submitOfficerReject()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 transition">Confirm Rejection</button>
+        <button onclick="closeModal('reject-modal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50" data-i18n="common.cancel">Cancel</button>
+        <button onclick="submitOfficerReject()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 transition" data-i18n="officer.confirmRejection">Confirm Rejection</button>
       </div>
     </div>
   </div>
 
-  <!-- FLOATING DEMO ASSISTANCE DOCK (SIH Demonstration Helper) -->
-  <aside class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-3xl w-[95%] sm:w-auto demo-bar bg-slate-900/90 text-white px-4 py-2.5 rounded-2xl border border-slate-700/80 shadow-2xl transition-all" id="demo-floater">
-    <div class="flex items-center justify-between space-x-3">
-      <div class="flex items-center space-x-2">
-        <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-300 hidden sm:inline">SIH Demo Controls:</span>
-      </div>
-
-      <div class="flex items-center space-x-1.5 overflow-x-auto py-1">
-        <button onclick="demoLogin('OFFICER')" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white transition flex items-center space-x-1 whitespace-nowrap shadow-sm">
-          <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-          <span>Officer (Ravi Kumar)</span>
-        </button>
-        <button onclick="demoLogin('FARMER')" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-700 hover:bg-amber-600 text-white transition flex items-center space-x-1 whitespace-nowrap shadow-sm">
-          <i data-lucide="tractor" class="w-3.5 h-3.5"></i>
-          <span>Farmer (Kumar)</span>
-        </button>
-        <button onclick="logout(); navigate('produce');" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-700 hover:bg-blue-600 text-white transition flex items-center space-x-1 whitespace-nowrap shadow-sm">
-          <i data-lucide="search" class="w-3.5 h-3.5"></i>
-          <span>Public Buyer View</span>
-        </button>
-        <button onclick="resetDemoData()" title="Reset database to demo seed data" class="px-2 py-1 text-xs font-semibold rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 transition flex items-center space-x-1 whitespace-nowrap">
-          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-          <span class="hidden md:inline">Reset Demo</span>
-        </button>
-      </div>
-
-      <button onclick="toggleDemoFloater()" class="text-slate-400 hover:text-white p-1" title="Minimize / Expand">
-        <i data-lucide="chevron-down" id="demo-floater-icon" class="w-4 h-4"></i>
-      </button>
-    </div>
-  </aside>
-
   <!-- Application Logic -->
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js" charset="UTF-8"></script>
 </body>
 </html>
