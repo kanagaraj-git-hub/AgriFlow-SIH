@@ -260,6 +260,7 @@
     setupWebSocket();
     await loadLocations();
     await checkSession();
+    resetOfficerRegistrationState(true);
     
     // Initialize lucide icons
     lucide.createIcons();
@@ -282,12 +283,7 @@
       STATE.ws = new WebSocket(wsUrl);
 
       STATE.ws.onopen = () => {
-        const statusEl = document.getElementById('ws-status');
-        if (statusEl && window.AgriFlowI18n) {
-          statusEl.innerText = window.AgriFlowI18n.t('common.liveSync');
-        } else if (statusEl) {
-          statusEl.innerText = 'Live Sync';
-        }
+        // WebSocket connection established successfully
       };
 
       STATE.ws.onmessage = (event) => {
@@ -471,12 +467,17 @@
     STATE.profile = null;
     localStorage.removeItem('agriflow_token');
     updateNavAuth(false);
-    showToast("You have been signed out.", "info");
+    resetOfficerRegistrationState(true);
+    showToast(t('auth.logoutSuccess', {}, undefined, "You have been signed out."), "info");
     navigate('landing');
   }
 
   // Navigation Controller
   function navigate(view, subaction = null) {
+    // If leaving auth view after completing registration, reset the registration state cleanly
+    if (view !== 'auth' && typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
+      resetOfficerRegistrationState(true);
+    }
     // Authorization guards
     if (view === 'officer-dashboard' && (!STATE.user || STATE.user.role !== 'OFFICER')) {
       showToast("Please log in as an Agriculture Officer to access the Officer Portal.", "warning");
@@ -1432,46 +1433,73 @@
     const farmingTypeLabel = t('profile.farmingType', {}, undefined, 'Farming Type');
 
     if (isOfficer) {
+      const officerId = prof.officer_id || STATE.user.officer_id || 'AGRI-OFFICER';
+      const isVerified = prof.is_verified_officer !== false;
+
       container.innerHTML = `
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(fullNameLabel)} *</label>
-            <input type="text" id="prof-name" required value="${escapeHtml(STATE.user.name)}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
+        <!-- Verified Official Information Card (Read-Only) -->
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-900" data-i18n="profile.verifiedOfficerInformation">Verified Officer Information</h4>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+              <i data-lucide="lock" class="w-3 h-3"></i>
+              <span data-i18n="profile.registryVerified">Registry Verified</span>
+            </span>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(designationLabel)} *</label>
-            <input type="text" id="prof-designation" required value="${escapeHtml(prof.designation || 'Assistant Agricultural Officer')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
+          <p class="text-[11px] text-emerald-800/80">
+            ${escapeHtml(t('profile.verifiedNotice', {}, undefined, 'Official identity details are retrieved from the AgriFlow Demo Registry and locked from modification.'))}
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="auth.officerId">Officer ID</span>
+              <span class="font-mono font-bold text-brand-900 text-xs">${escapeHtml(officerId)}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="profile.fullName">Full Name</span>
+              <span class="font-bold text-slate-900 text-xs">${escapeHtml(prof.name || STATE.user.name)}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="profile.designation">Designation</span>
+              <span class="font-semibold text-slate-800 text-xs">${escapeHtml(prof.designation || 'Agriculture Officer')}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="profile.department">Department</span>
+              <span class="font-semibold text-slate-800 text-xs">${escapeHtml(prof.department || 'Department of Agriculture')}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="common.state">State</span>
+              <span class="font-semibold text-slate-800 text-xs">${escapeHtml(prof.state || 'Tamil Nadu')}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="common.district">District</span>
+              <span class="font-semibold text-slate-800 text-xs">${escapeHtml(prof.district || 'Salem')}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="profile.assignedArea">Working Place / Area</span>
+              <span class="font-semibold text-slate-800 text-xs">${escapeHtml(prof.assigned_area || 'Sankari')}</span>
+            </div>
+            <div class="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+              <span class="text-slate-500 block text-[10px] uppercase font-bold" data-i18n="profile.contactNumber">Registered Mobile</span>
+              <span class="font-mono font-semibold text-slate-800 text-xs">${escapeHtml(prof.contact || STATE.user.phone || '9876543210')}</span>
+            </div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
+
+        <!-- Editable Preferences Section -->
+        <div class="space-y-3 pt-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700" data-i18n="profile.applicationPreferences">Application Preferences</h4>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(departmentLabel)} *</label>
-            <input type="text" id="prof-department" required value="${escapeHtml(prof.department || 'Department of Agriculture')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
+            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="profile.officialEmail">${escapeHtml(officialEmailLabel)}</label>
+            <input type="email" id="prof-email" value="${escapeHtml(STATE.user.email || prof.email || '')}" placeholder="officer@example.com" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <p class="text-[11px] text-slate-400 mt-1" data-i18n="profile.emailNotice">Used for AgriFlow notification and produce verification alerts.</p>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(contactLabel)} *</label>
-            <input type="text" id="prof-contact" required value="${escapeHtml(prof.contact || STATE.user.phone)}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
-          </div>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(assignedAreaLabel)} *</label>
-            <input type="text" id="prof-area" required value="${escapeHtml(prof.assigned_area || 'Sankari')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(districtLabel)} *</label>
-            <input type="text" id="prof-district" required value="${escapeHtml(prof.district || 'Salem')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(stateLabel)} *</label>
-            <input type="text" id="prof-state" required value="${escapeHtml(prof.state || 'Tamil Nadu')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">${escapeHtml(officialEmailLabel)}</label>
-          <input type="email" id="prof-email" value="${escapeHtml(STATE.user.email || '')}" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200">
         </div>
       `;
+      if (window.lucide) lucide.createIcons();
     } else {
       container.innerHTML = `
         <div class="grid grid-cols-2 gap-3">
@@ -1519,25 +1547,19 @@
   async function saveUserProfile(e) {
     e.preventDefault();
     const isOfficer = STATE.user.role === 'OFFICER';
-    const name = document.getElementById('prof-name').value;
 
     let body = {};
     let url = '';
 
     if (isOfficer) {
       url = '/api/officer/profile';
+      const profEmailInput = document.getElementById('prof-email');
       body = {
-        name: name,
-        designation: document.getElementById('prof-designation').value,
-        department: document.getElementById('prof-department').value,
-        assigned_area: document.getElementById('prof-area').value,
-        district: document.getElementById('prof-district').value,
-        state: document.getElementById('prof-state').value,
-        contact: document.getElementById('prof-contact').value,
-        email: document.getElementById('prof-email').value
+        email: profEmailInput ? profEmailInput.value.trim() : STATE.user.email
       };
     } else {
       url = '/api/farmer/profile';
+      const name = document.getElementById('prof-name').value;
       body = {
         name: name,
         village: document.getElementById('prof-f-village').value,
@@ -1578,66 +1600,636 @@
   // -------------------------------------------------------------
   let currentAuthRole = 'OFFICER';
 
+  // Officer Registration Wizard State
+  let officerRegState = {
+    step: 1,
+    officerId: '',
+    maskedMobile: '',
+    demoOtp: '',
+    verificationToken: '',
+    officerDetails: null,
+    otpTimerInterval: null,
+    otpSecondsRemaining: 300
+  };
+
   function openAuthModal(tab = 'login', preferredRole = null) {
-    navigate('auth');
-    switchAuthTab(tab);
     if (preferredRole) {
       setAuthRole(preferredRole);
     }
+    if (tab === 'register' && (preferredRole === 'OFFICER' || currentAuthRole === 'OFFICER')) {
+      if (typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
+        resetOfficerRegistrationState(true);
+      }
+    }
+    navigate('auth');
+    switchAuthTab(tab);
   }
 
   function switchAuthTab(tab) {
     const formLogin = document.getElementById('form-login');
-    const formRegister = document.getElementById('form-register');
+    const formRegisterFarmer = document.getElementById('form-register-farmer');
+    const officerWizard = document.getElementById('officer-reg-wizard');
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
+    const idLabel = document.getElementById('login-identifier-label');
+    const idInput = document.getElementById('login-identifier');
+    const officerHint = document.getElementById('login-officer-hint');
 
     if (tab === 'login') {
-      formLogin.classList.remove('hidden');
-      formRegister.classList.add('hidden');
-      tabLogin.classList.add('border-brand-700', 'text-brand-700');
-      tabLogin.classList.remove('border-transparent', 'text-slate-500');
-      tabRegister.classList.remove('border-brand-700', 'text-brand-700');
-      tabRegister.classList.add('border-transparent', 'text-slate-500');
+      if (typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
+        resetOfficerRegistrationState(true);
+      }
+      if (formLogin) formLogin.classList.remove('hidden');
+      if (formRegisterFarmer) formRegisterFarmer.classList.add('hidden');
+      if (officerWizard) officerWizard.classList.add('hidden');
+
+      tabLogin?.classList.add('border-brand-700', 'text-brand-700');
+      tabLogin?.classList.remove('border-transparent', 'text-slate-500');
+      tabRegister?.classList.remove('border-brand-700', 'text-brand-700');
+      tabRegister?.classList.add('border-transparent', 'text-slate-500');
+
+      if (currentAuthRole === 'OFFICER') {
+        if (idLabel) idLabel.textContent = t('auth.officerLoginIdLabel', {}, undefined, 'Officer ID / Login ID');
+        if (idInput) idInput.placeholder = 'e.g. AGRI-TN-0001 or ravi_salem';
+        if (officerHint) officerHint.classList.remove('hidden');
+      } else {
+        if (idLabel) idLabel.textContent = t('auth.identifier', {}, undefined, 'Mobile Number or Email');
+        if (idInput) idInput.placeholder = 'e.g. 9876543210 or email';
+        if (officerHint) officerHint.classList.add('hidden');
+      }
     } else {
-      formLogin.classList.add('hidden');
-      formRegister.classList.remove('hidden');
-      tabRegister.classList.add('border-brand-700', 'text-brand-700');
-      tabRegister.classList.remove('border-transparent', 'text-slate-500');
-      tabLogin.classList.remove('border-brand-700', 'text-brand-700');
-      tabLogin.classList.add('border-transparent', 'text-slate-500');
+      if (formLogin) formLogin.classList.add('hidden');
+
+      tabRegister?.classList.add('border-brand-700', 'text-brand-700');
+      tabRegister?.classList.remove('border-transparent', 'text-slate-500');
+      tabLogin?.classList.remove('border-brand-700', 'text-brand-700');
+      tabLogin?.classList.add('border-transparent', 'text-slate-500');
+
+      if (currentAuthRole === 'OFFICER') {
+        if (typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
+          resetOfficerRegistrationState(true);
+        }
+        if (formRegisterFarmer) formRegisterFarmer.classList.add('hidden');
+        if (officerWizard) officerWizard.classList.remove('hidden');
+      } else {
+        if (officerWizard) officerWizard.classList.add('hidden');
+        if (formRegisterFarmer) formRegisterFarmer.classList.remove('hidden');
+      }
     }
+    if (window.lucide) lucide.createIcons();
   }
 
   function setAuthRole(role) {
     currentAuthRole = role;
     const btnOff = document.getElementById('role-btn-officer');
     const btnFarm = document.getElementById('role-btn-farmer');
-    const regOffFields = document.getElementById('reg-officer-fields');
-    const regFarmFields = document.getElementById('reg-farmer-fields');
+    const formLogin = document.getElementById('form-login');
+    const formRegisterFarmer = document.getElementById('form-register-farmer');
+    const officerWizard = document.getElementById('officer-reg-wizard');
+    const idLabel = document.getElementById('login-identifier-label');
+    const idInput = document.getElementById('login-identifier');
+    const officerHint = document.getElementById('login-officer-hint');
 
     if (role === 'OFFICER') {
-      btnOff.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
-      btnOff.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
-      btnFarm.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
-      btnFarm.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
+      if (typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
+        resetOfficerRegistrationState(true);
+      }
+      btnOff?.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnOff?.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
+      btnFarm?.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnFarm?.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
 
-      regOffFields.classList.remove('hidden');
-      regFarmFields.classList.add('hidden');
+      if (idLabel) idLabel.textContent = t('auth.officerLoginIdLabel', {}, undefined, 'Officer ID / Login ID');
+      if (idInput) idInput.placeholder = 'e.g. AGRI-TN-0001 or ravi_salem';
+      if (officerHint) officerHint.classList.remove('hidden');
+
+      // If in register view, toggle to officer wizard
+      if (formLogin && formLogin.classList.contains('hidden')) {
+        formRegisterFarmer?.classList.add('hidden');
+        officerWizard?.classList.remove('hidden');
+      }
     } else {
-      btnFarm.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
-      btnFarm.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
-      btnOff.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
-      btnOff.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
+      btnFarm?.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnFarm?.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
+      btnOff?.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnOff?.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
 
-      regOffFields.classList.add('hidden');
-      regFarmFields.classList.remove('hidden');
+      if (idLabel) idLabel.textContent = t('auth.identifier', {}, undefined, 'Mobile Number or Email');
+      if (idInput) idInput.placeholder = 'e.g. 9876543210 or email';
+      if (officerHint) officerHint.classList.add('hidden');
+
+      // If in register view, toggle to farmer register
+      if (formLogin && formLogin.classList.contains('hidden')) {
+        officerWizard?.classList.add('hidden');
+        formRegisterFarmer?.classList.remove('hidden');
+      }
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // -------------------------------------------------------------
+  // AGRICULTURE OFFICER VERIFICATION & REGISTRATION FLOW
+  // -------------------------------------------------------------
+  function goToOfficerStep(step) {
+    if (officerRegState) officerRegState.step = step;
+    for (let s = 1; s <= 5; s++) {
+      const stepEl = document.getElementById(`officer-step-${s}`);
+      if (stepEl) {
+        if (s === step) stepEl.classList.remove('hidden');
+        else stepEl.classList.add('hidden');
+      }
+      const ind = document.getElementById(`step-ind-${s}`);
+      if (ind) {
+        const badge = ind.querySelector('span:first-child');
+        if (s === step) {
+          ind.className = 'text-brand-700 font-bold flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-brand-700 text-white text-[10px] inline-flex items-center justify-center font-mono';
+        } else if (s < step) {
+          ind.className = 'text-emerald-700 font-semibold flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px] inline-flex items-center justify-center font-mono';
+        } else {
+          ind.className = 'text-slate-400 flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-slate-200 text-slate-600 text-[10px] inline-flex items-center justify-center font-mono';
+        }
+      }
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function resetOfficerRegistrationState(clearInputs = true) {
+    if (officerRegState && officerRegState.otpTimerInterval) {
+      clearInterval(officerRegState.otpTimerInterval);
+      officerRegState.otpTimerInterval = null;
+    }
+
+    officerRegState = {
+      step: 1,
+      officerId: '',
+      maskedMobile: '',
+      demoOtp: '',
+      verificationToken: '',
+      officerDetails: null,
+      otpTimerInterval: null,
+      otpSecondsRemaining: 300,
+      createdLoginId: '',
+      createdOfficerId: ''
+    };
+
+    try {
+      sessionStorage.removeItem('agriflow_officer_reg_state');
+      sessionStorage.removeItem('agriflow_officer_reg_temp');
+      localStorage.removeItem('agriflow_officer_reg_state');
+    } catch (e) {}
+
+    goToOfficerStep(1);
+
+    const errIds = ['officer-id-error', 'officer-otp-error', 'officer-cred-error'];
+    errIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('hidden');
+        el.innerHTML = '';
+      }
+    });
+
+    if (clearInputs) {
+      const inputIds = [
+        'officer-verify-id-input',
+        'officer-otp-input',
+        'officer-new-login-id',
+        'officer-new-password',
+        'officer-confirm-password'
+      ];
+      inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    }
+
+    const textResetMap = {
+      'officer-masked-mobile': '******3210',
+      'officer-demo-otp-val': '------',
+      'officer-otp-timer': '05:00',
+      'dtl-officer-id': '',
+      'dtl-name': '',
+      'dtl-post': '',
+      'dtl-dept': '',
+      'dtl-state': '',
+      'dtl-district': '',
+      'dtl-area': '',
+      'dtl-mobile': '',
+      'done-officer-id': '',
+      'done-officer-name': '',
+      'done-login-id': ''
+    };
+    Object.entries(textResetMap).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function resetOfficerWizardToStep1() {
+    resetOfficerRegistrationState(false);
+  }
+
+  function fillOfficerId(id) {
+    const input = document.getElementById('officer-verify-id-input');
+    if (input) {
+      input.value = id;
+      input.focus();
     }
   }
 
+  function startOtpCountdown(seconds = 300) {
+    if (officerRegState.otpTimerInterval) {
+      clearInterval(officerRegState.otpTimerInterval);
+    }
+    officerRegState.otpSecondsRemaining = seconds;
+    const timerEl = document.getElementById('officer-otp-timer');
+
+    const updateDisplay = () => {
+      const mins = Math.floor(officerRegState.otpSecondsRemaining / 60);
+      const secs = officerRegState.otpSecondsRemaining % 60;
+      if (timerEl) {
+        timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+      if (officerRegState.otpSecondsRemaining <= 0) {
+        clearInterval(officerRegState.otpTimerInterval);
+        officerRegState.otpTimerInterval = null;
+        if (timerEl) timerEl.textContent = 'Expired';
+        const errBox = document.getElementById('officer-otp-error');
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-xs';
+          errBox.innerHTML = `<strong>${escapeHtml(t('auth.otpExpired', {}, undefined, 'OTP expired'))}:</strong> ${escapeHtml(t('auth.otpExpiredNotice', {}, undefined, 'This OTP has expired. Please click Resend OTP to generate a new one.'))}`;
+          errBox.classList.remove('hidden');
+        }
+      } else {
+        officerRegState.otpSecondsRemaining--;
+      }
+    };
+
+    updateDisplay();
+    officerRegState.otpTimerInterval = setInterval(updateDisplay, 1000);
+  }
+
+  async function handleVerifyOfficerId() {
+    const input = document.getElementById('officer-verify-id-input');
+    const errBox = document.getElementById('officer-id-error');
+    const btn = document.getElementById('btn-verify-officer-id');
+    const officerId = input ? input.value.trim().toUpperCase() : '';
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    if (!officerId) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.innerHTML = `<strong>${escapeHtml(t('common.warning', {}, undefined, 'Warning'))}:</strong> ${escapeHtml(t('auth.enterOfficerIdPrompt', {}, undefined, 'Please enter your Officer ID (e.g. AGRI-TN-0001).'))}`;
+        errBox.classList.remove('hidden');
+      }
+      input?.focus();
+      return;
+    }
+
+    try {
+      if (btn) btn.disabled = true;
+      const res = await fetch('/api/auth/officer/verify-id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ officer_id: officerId })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        officerRegState.officerId = data.officer_id;
+        officerRegState.maskedMobile = data.masked_mobile;
+        officerRegState.demoOtp = data.demo_otp;
+
+        // Populate Step 2 UI
+        const mobileEl = document.getElementById('officer-masked-mobile');
+        if (mobileEl) mobileEl.textContent = data.masked_mobile;
+
+        const otpValEl = document.getElementById('officer-demo-otp-val');
+        if (otpValEl) otpValEl.textContent = data.demo_otp;
+
+        const otpInput = document.getElementById('officer-otp-input');
+        if (otpInput) otpInput.value = '';
+
+        startOtpCountdown(data.expires_in_seconds || 300);
+        goToOfficerStep(2);
+        showToast(t('auth.officerIdVerified', {}, undefined, "Officer ID verified!"), 'success');
+      } else {
+        if (errBox) {
+          errBox.classList.remove('hidden');
+          if (res.status === 409) {
+            // Already registered
+            errBox.className = 'p-3.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 text-xs space-y-2';
+            errBox.innerHTML = `
+              <div class="font-bold text-amber-900 text-sm flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                <span>${escapeHtml(t('auth.accountAlreadyExists', {}, undefined, 'Officer account already exists'))}</span>
+              </div>
+              <p class="text-amber-800 text-xs leading-relaxed">${escapeHtml(data.detail || t('auth.accountAlreadyExistsMsg', {}, undefined, 'An AgriFlow account has already been created for this Officer ID. Please use Officer Login.'))}</p>
+              <button type="button" onclick="goToOfficerLoginPrefilled('${escapeHtml(officerId)}')" class="w-full py-2 px-3 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center gap-1.5">
+                <span>${escapeHtml(t('auth.proceedToLogin', {}, undefined, 'Proceed to Officer Login'))}</span> →
+              </button>
+            `;
+            if (window.lucide) lucide.createIcons();
+          } else {
+            // 404 Not Found or other error
+            errBox.className = 'p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-900 text-xs space-y-1';
+            errBox.innerHTML = `
+              <div class="font-bold text-red-900 text-sm flex items-center gap-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 shrink-0"></i>
+                <span>${escapeHtml(t('auth.invalidOfficerId', {}, undefined, 'Officer ID Not Found'))}</span>
+              </div>
+              <p class="text-red-800 text-xs leading-relaxed">${escapeHtml(data.detail || t('auth.invalidOfficerIdMsg', {}, undefined, 'Officer ID not found. Please enter a valid Agriculture Officer ID.'))}</p>
+            `;
+            if (window.lucide) lucide.createIcons();
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error verifying officer ID:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.networkError', {}, undefined, 'Network error verifying Officer ID.'))}`;
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function autoFillDemoOtp() {
+    const input = document.getElementById('officer-otp-input');
+    if (input && officerRegState.demoOtp) {
+      input.value = officerRegState.demoOtp;
+      input.focus();
+    }
+  }
+
+  async function handleVerifyOtp() {
+    const input = document.getElementById('officer-otp-input');
+    const errBox = document.getElementById('officer-otp-error');
+    const btn = document.getElementById('btn-verify-otp');
+    const otp = input ? input.value.trim() : '';
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    if (!otp || otp.length !== 6) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.innerHTML = `<strong>${escapeHtml(t('common.warning', {}, undefined, 'Warning'))}:</strong> ${escapeHtml(t('auth.enterSixDigitOtp', {}, undefined, 'Please enter the 6-digit OTP code.'))}`;
+        errBox.classList.remove('hidden');
+      }
+      input?.focus();
+      return;
+    }
+
+    try {
+      if (btn) btn.disabled = true;
+      const res = await fetch('/api/auth/officer/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          officer_id: officerRegState.officerId,
+          otp: otp
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (officerRegState.otpTimerInterval) {
+          clearInterval(officerRegState.otpTimerInterval);
+          officerRegState.otpTimerInterval = null;
+        }
+
+        officerRegState.verificationToken = data.verification_token;
+        officerRegState.officerDetails = data.officer;
+
+        // Populate Step 3 details card
+        const dtlId = document.getElementById('dtl-officer-id');
+        const dtlName = document.getElementById('dtl-name');
+        const dtlPost = document.getElementById('dtl-post');
+        const dtlDept = document.getElementById('dtl-dept');
+        const dtlState = document.getElementById('dtl-state');
+        const dtlDistrict = document.getElementById('dtl-district');
+        const dtlArea = document.getElementById('dtl-area');
+        const dtlMobile = document.getElementById('dtl-mobile');
+
+        if (dtlId) dtlId.textContent = data.officer.officer_id;
+        if (dtlName) dtlName.textContent = data.officer.name;
+        if (dtlPost) dtlPost.textContent = data.officer.designation;
+        if (dtlDept) dtlDept.textContent = data.officer.department;
+        if (dtlState) dtlState.textContent = data.officer.state;
+        if (dtlDistrict) dtlDistrict.textContent = data.officer.district;
+        if (dtlArea) dtlArea.textContent = data.officer.assigned_area;
+        if (dtlMobile) dtlMobile.textContent = data.officer.masked_mobile;
+
+        // Default Login ID to the verified Officer ID in Step 4
+        const loginIdInput = document.getElementById('officer-new-login-id');
+        if (loginIdInput) {
+          loginIdInput.value = data.officer.officer_id;
+        }
+
+        goToOfficerStep(3);
+        showToast(t('auth.officerDetailsVerified', {}, undefined, "Officer identity verified! Official details retrieved."), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.innerHTML = `<strong>${escapeHtml(t('auth.verificationFailed', {}, undefined, 'Verification Failed'))}:</strong> ${escapeHtml(data.detail || t('auth.invalidOtp', {}, undefined, 'Invalid OTP code.'))}`;
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error verifying OTP:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.networkError', {}, undefined, 'Network error during OTP verification.'))}`;
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function handleResendOtp() {
+    const errBox = document.getElementById('officer-otp-error');
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    try {
+      const res = await fetch('/api/auth/officer/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ officer_id: officerRegState.officerId })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        officerRegState.demoOtp = data.demo_otp;
+        const otpValEl = document.getElementById('officer-demo-otp-val');
+        if (otpValEl) otpValEl.textContent = data.demo_otp;
+
+        const otpInput = document.getElementById('officer-otp-input');
+        if (otpInput) otpInput.value = '';
+
+        startOtpCountdown(data.expires_in_seconds || 300);
+        showToast(`${t('auth.newDemoOtpGenerated', {}, undefined, 'New Demo OTP generated')}: ${data.demo_otp}`, 'info');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.innerHTML = `${escapeHtml(data.detail || t('auth.resendOtpFailed', {}, undefined, 'Failed to resend OTP.'))}`;
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error resending OTP:", err);
+      showToast(t('auth.networkError', {}, undefined, "Network error resending OTP"), "error");
+    }
+  }
+
+  async function handleCreateOfficerAccount(e) {
+    e.preventDefault();
+    const loginIdInput = document.getElementById('officer-new-login-id');
+    const pwInput = document.getElementById('officer-new-password');
+    const confirmInput = document.getElementById('officer-confirm-password');
+    const errBox = document.getElementById('officer-cred-error');
+    const btn = document.getElementById('btn-create-officer-acc');
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    const loginId = loginIdInput ? loginIdInput.value.trim() : '';
+    const password = pwInput ? pwInput.value : '';
+    const confirmPassword = confirmInput ? confirmInput.value : '';
+
+    if (!loginId || !password || !confirmPassword) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.requiredFields', {}, undefined, 'Please fill in all fields.'))}`;
+        errBox.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (password.length < 6) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.passwordLengthError', {}, undefined, 'Password must be at least 6 characters long.'))}`;
+        errBox.classList.remove('hidden');
+      }
+      pwInput?.focus();
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.passwordMismatch', {}, undefined, 'Passwords do not match.'))}`;
+        errBox.classList.remove('hidden');
+      }
+      confirmInput?.focus();
+      return;
+    }
+
+    try {
+      if (btn) btn.disabled = true;
+      const res = await fetch('/api/auth/officer/create-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          officer_id: officerRegState.officerId,
+          verification_token: officerRegState.verificationToken,
+          login_id: loginId,
+          password: password,
+          confirm_password: confirmPassword
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Populate Step 5 Complete Card
+        const doneId = document.getElementById('done-officer-id');
+        const doneName = document.getElementById('done-officer-name');
+        const doneLogin = document.getElementById('done-login-id');
+
+        if (doneId) doneId.textContent = data.user.officer_id || officerRegState.officerId;
+        if (doneName) doneName.textContent = data.user.name;
+        if (doneLogin) doneLogin.textContent = data.user.login_id || loginId;
+
+        officerRegState.createdLoginId = data.user.login_id || loginId;
+        officerRegState.createdOfficerId = data.user.officer_id || officerRegState.officerId;
+
+        goToOfficerStep(5);
+        showToast(t('auth.officerAccountCreatedSuccess', {}, undefined, "Officer account created successfully!"), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.innerHTML = `<strong>${escapeHtml(t('auth.registrationFailed', {}, undefined, 'Registration failed'))}:</strong> ${escapeHtml(data.detail || 'Could not create account.')}`;
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error creating officer account:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.innerHTML = `${escapeHtml(t('auth.networkError', {}, undefined, 'Network error creating officer account.'))}`;
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function goToOfficerLoginAfterReg() {
+    const prefillId = (officerRegState && (officerRegState.createdLoginId || officerRegState.createdOfficerId)) || '';
+    resetOfficerRegistrationState(true);
+    switchAuthTab('login');
+    setAuthRole('OFFICER');
+    const idInput = document.getElementById('login-identifier');
+    if (idInput && prefillId) {
+      idInput.value = prefillId;
+      const pwInput = document.getElementById('login-password');
+      if (pwInput) pwInput.focus();
+    }
+  }
+
+  function goToOfficerLoginPrefilled(officerId) {
+    resetOfficerRegistrationState(true);
+    closeModal('demo-registry-modal');
+    switchAuthTab('login');
+    setAuthRole('OFFICER');
+    const idInput = document.getElementById('login-identifier');
+    if (idInput && officerId) {
+      idInput.value = officerId;
+      const pwInput = document.getElementById('login-password');
+      if (pwInput) pwInput.focus();
+    }
+  }
+
+  // -------------------------------------------------------------
+  // LOGIN SUBMIT
+  // -------------------------------------------------------------
   async function handleLoginSubmit(e) {
     e.preventDefault();
-    const id = document.getElementById('login-identifier').value;
+    const id = document.getElementById('login-identifier').value.trim();
     const pw = document.getElementById('login-password').value;
 
     try {
@@ -1660,7 +2252,7 @@
         await checkSession();
         navigate(data.user.role === 'OFFICER' ? 'officer-dashboard' : 'farmer-dashboard');
       } else {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         showToast(err.detail || t('auth.invalidCredentials', {}, undefined, "Invalid login credentials"), "error");
       }
     } catch (err) {
@@ -1668,13 +2260,16 @@
     }
   }
 
-  async function handleRegisterSubmit(e) {
+  // -------------------------------------------------------------
+  // FARMER REGISTRATION SUBMIT
+  // -------------------------------------------------------------
+  async function handleFarmerRegisterSubmit(e) {
     e.preventDefault();
-    const name = document.getElementById('reg-name')?.value?.trim() || '';
-    const phone = document.getElementById('reg-phone')?.value?.trim() || '';
-    const emailRaw = document.getElementById('reg-email')?.value?.trim();
+    const name = document.getElementById('reg-farmer-name')?.value?.trim() || '';
+    const phone = document.getElementById('reg-farmer-phone')?.value?.trim() || '';
+    const emailRaw = document.getElementById('reg-farmer-email')?.value?.trim();
     const email = emailRaw ? emailRaw : null;
-    const pw = document.getElementById('reg-password')?.value || '';
+    const pw = document.getElementById('reg-farmer-password')?.value || '';
 
     if (!name || !phone || !pw) {
       showToast(t('auth.requiredFields', {}, undefined, "Please fill in all required fields (Name, Mobile, Password)."), "warning");
@@ -1686,25 +2281,17 @@
       phone: phone,
       email: email,
       password: pw,
-      role: currentAuthRole
+      role: 'FARMER',
+      village: document.getElementById('reg-f-village')?.value?.trim() || 'Sankari West',
+      area: document.getElementById('reg-f-area')?.value?.trim() || 'Sankari',
+      district: document.getElementById('reg-f-district')?.value?.trim() || 'Salem',
+      state: document.getElementById('reg-f-state')?.value?.trim() || 'Tamil Nadu',
+      land_unit: 'Acres',
+      farming_type: document.getElementById('reg-f-farming-type')?.value?.trim() || 'Conventional'
     };
 
-    if (currentAuthRole === 'OFFICER') {
-      payload.designation = document.getElementById('reg-designation')?.value?.trim() || 'Assistant Agricultural Officer';
-      payload.department = document.getElementById('reg-department')?.value?.trim() || 'Department of Agriculture';
-      payload.assigned_area = document.getElementById('reg-assigned-area')?.value?.trim() || 'Sankari';
-      payload.district = document.getElementById('reg-district')?.value?.trim() || 'Salem';
-      payload.state = document.getElementById('reg-state')?.value?.trim() || 'Tamil Nadu';
-    } else {
-      payload.village = document.getElementById('reg-f-village')?.value?.trim() || 'Sankari West';
-      payload.area = document.getElementById('reg-f-area')?.value?.trim() || 'Sankari';
-      payload.district = document.getElementById('reg-f-district')?.value?.trim() || 'Salem';
-      payload.state = document.getElementById('reg-f-state')?.value?.trim() || 'Tamil Nadu';
-      const landVal = parseFloat(document.getElementById('reg-f-land')?.value || '1.0');
-      payload.land_area = isNaN(landVal) || landVal <= 0 ? 1.0 : landVal;
-      payload.land_unit = 'Acres';
-      payload.farming_type = document.getElementById('reg-f-farming-type')?.value?.trim() || 'Conventional';
-    }
+    const landVal = parseFloat(document.getElementById('reg-f-land')?.value || '1.0');
+    payload.land_area = isNaN(landVal) || landVal <= 0 ? 1.0 : landVal;
 
     try {
       const res = await fetch('/api/auth/register', {
@@ -1720,7 +2307,7 @@
         localStorage.setItem('agriflow_token', data.token);
         showToast(t('auth.accountCreated', { name: data.user.name }, undefined, `Account created! Welcome, ${data.user.name}.`), 'success');
         await checkSession();
-        navigate(data.user.role === 'OFFICER' ? 'officer-dashboard' : 'farmer-dashboard');
+        navigate('farmer-dashboard');
       } else {
         const err = await res.json().catch(() => ({}));
         showToast(err.detail || t('auth.registrationFailed', {}, undefined, "Registration failed. Please check your details."), "error");
@@ -1730,6 +2317,21 @@
       showToast(t('auth.networkError', {}, undefined, "Network error registering account"), "error");
     }
   }
+
+  // Preserve backwards compatibility
+  window.handleRegisterSubmit = handleFarmerRegisterSubmit;
+  window.handleFarmerRegisterSubmit = handleFarmerRegisterSubmit;
+  window.handleVerifyOfficerId = handleVerifyOfficerId;
+  window.handleVerifyOtp = handleVerifyOtp;
+  window.handleResendOtp = handleResendOtp;
+  window.handleCreateOfficerAccount = handleCreateOfficerAccount;
+  window.goToOfficerStep = goToOfficerStep;
+  window.resetOfficerRegistrationState = resetOfficerRegistrationState;
+  window.resetOfficerWizardToStep1 = resetOfficerWizardToStep1;
+  window.autoFillDemoOtp = autoFillDemoOtp;
+  window.fillOfficerId = fillOfficerId;
+  window.goToOfficerLoginAfterReg = goToOfficerLoginAfterReg;
+  window.goToOfficerLoginPrefilled = goToOfficerLoginPrefilled;
 
   // -------------------------------------------------------------
   // UI UTILITIES & TOASTS

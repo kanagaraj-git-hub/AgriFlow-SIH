@@ -13,36 +13,59 @@ def seed_database(clean: bool = True):
         cursor.execute("DELETE FROM produce_records;")
         cursor.execute("DELETE FROM farmer_profiles;")
         cursor.execute("DELETE FROM officer_profiles;")
+        cursor.execute("DELETE FROM officer_accounts;")
+        cursor.execute("DELETE FROM otp_verifications;")
         cursor.execute("DELETE FROM sessions;")
         cursor.execute("DELETE FROM users;")
 
-    # 1. Create Agriculture Officer: Ravi Kumar
+    # Ensure mock officer registry is populated
+    from database import seed_mock_officer_registry
+    seed_mock_officer_registry(cursor)
+
+    # 1. Pre-register Demo Agriculture Officer: Priya Devi (AGRI-TN-0002)
+    # AGRI-TN-0001 (Ravi Kumar) is intentionally left UNREGISTERED so evaluators
+    # can test the complete new registration flow (Test 1 & Test 5).
     cursor.execute("""
-    INSERT INTO users (role, name, email, phone, password_hash)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO users (role, name, email, phone, officer_id, login_id, password_hash)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (
         "OFFICER",
-        "Ravi Kumar",
-        "ravi.kumar@agri.tn.gov.in",
-        "9876543210",
+        "Priya Devi",
+        "priya.devi@agri.tn.gov.in",
+        "9876543211",
+        "AGRI-TN-0002",
+        "priya.devi",
         hash_password("officer123")
     ))
     officer_id = cursor.lastrowid
 
-    # 2. Officer Profile
+    # 2. Officer Profile for Priya Devi
     cursor.execute("""
-    INSERT INTO officer_profiles (user_id, designation, department, assigned_area, district, state, contact, photo_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO officer_profiles (user_id, officer_id, designation, department, assigned_area, district, state, contact, photo_url)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         officer_id,
-        "Assistant Agricultural Officer",
+        "AGRI-TN-0002",
+        "Assistant Agriculture Officer",
         "Department of Agriculture & Farmers Welfare",
         "Sankari",
         "Salem",
         "Tamil Nadu",
-        "+91 98765 43210",
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+        "9876543211",
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80"
     ))
+
+    # Officer Account Record
+    cursor.execute("""
+    INSERT INTO officer_accounts (officer_id, login_id, password_hash, user_id)
+    VALUES (?, ?, ?, ?)
+    """, (
+        "AGRI-TN-0002",
+        "priya.devi",
+        hash_password("officer123"),
+        officer_id
+    ))
+
 
     # 3. Create Farmer: Kumar
     cursor.execute("""
@@ -205,10 +228,12 @@ def seed_database(clean: bool = True):
     conn.commit()
     conn.close()
     print("AgriFlow demo data successfully seeded:")
-    print("  - Officer: Ravi Kumar (Sankari, Salem, Tamil Nadu) | Login: ravi.kumar@agri.tn.gov.in / officer123")
+    print("  - Pre-registered Demo Officer: Priya Devi (AGRI-TN-0002) | Login: priya.devi / officer123")
+    print("  - Ready for Verification & Registration: Ravi Kumar (AGRI-TN-0001 - Salem, Sankari)")
     print("  - Farmer: Kumar (Sankari, Salem, Tamil Nadu) | Login: 9123456780 / farmer123")
     print("  - Produce: Onion (15T), Tomato (16T), Potato (8T) - Verified")
     print("  - Request: Kumar -> Onion (5T) - Pending Verification")
+
 
 if __name__ == "__main__":
     seed_database(clean=True)

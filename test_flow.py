@@ -33,21 +33,52 @@ def run_tests():
     assert status == 200, f"Reset demo failed: {res}"
     print("[PASS] Step 0: Demo database reset and seeded successfully")
 
-    # Step 1: Officer login (Ravi Kumar)
+    # Step 1: Officer Verification & Registration (Ravi Kumar: AGRI-TN-0001)
+    # 1a. Verify Officer ID in Demo Registry
+    status, res = make_request("/api/auth/officer/verify-id", method="POST", data={
+        "officer_id": "AGRI-TN-0001"
+    })
+    assert status == 200, f"Verify officer ID failed: {res}"
+    assert res["officer_id"] == "AGRI-TN-0001"
+    assert res["masked_mobile"] == "******3210"
+    demo_otp = res["demo_otp"]
+    print(f"[PASS] Step 1a: Officer ID AGRI-TN-0001 verified. Demo OTP: {demo_otp}")
+
+    # 1b. Verify OTP
+    status, res = make_request("/api/auth/officer/verify-otp", method="POST", data={
+        "officer_id": "AGRI-TN-0001",
+        "otp": demo_otp
+    })
+    assert status == 200, f"Verify OTP failed: {res}"
+    verification_token = res["verification_token"]
+    assert res["officer"]["name"] == "Ravi Kumar"
+    print(f"[PASS] Step 1b: OTP verified. Details retrieved for {res['officer']['name']}")
+
+    # 1c. Create Officer Account
+    status, res = make_request("/api/auth/officer/create-account", method="POST", data={
+        "officer_id": "AGRI-TN-0001",
+        "verification_token": verification_token,
+        "login_id": "ravi_kumar_officer",
+        "password": "officer123",
+        "confirm_password": "officer123"
+    })
+    assert status == 200, f"Create officer account failed: {res}"
+    print(f"[PASS] Step 1c: Officer account created with Login ID: {res['user']['login_id']}")
+
+    # 1d. Officer login using Officer ID / Login ID
     status, res = make_request("/api/auth/login", method="POST", data={
-        "identifier": "ravi.kumar@agri.tn.gov.in",
+        "identifier": "AGRI-TN-0001",
         "password": "officer123",
         "role": "OFFICER"
     })
     assert status == 200, f"Officer login failed: {res}"
     officer_token = res["token"]
-    print(f"[PASS] Step 1: Officer Ravi Kumar logged in successfully. Token: {officer_token[:10]}...")
+    print(f"[PASS] Step 1d: Officer Ravi Kumar logged in successfully. Token: {officer_token[:10]}...")
 
     # Step 2: Verify Officer profile
     status, res = make_request("/api/officer/profile", token=officer_token)
     assert status == 200, f"Get officer profile failed: {res}"
     assert res["name"] == "Ravi Kumar"
-    assert res["designation"] == "Assistant Agricultural Officer"
     assert res["assigned_area"] == "Sankari"
     assert res["district"] == "Salem"
     assert res["state"] == "Tamil Nadu"

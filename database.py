@@ -147,11 +147,70 @@ def init_db():
     );
     """)
 
+    # 8. Officer Registry table (Mock Agriculture Officer Registry)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS officer_registry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        officer_id TEXT NOT NULL UNIQUE,
+        full_name TEXT NOT NULL,
+        designation TEXT NOT NULL,
+        department TEXT NOT NULL DEFAULT 'Department of Agriculture & Farmers Welfare',
+        state TEXT NOT NULL,
+        district TEXT NOT NULL,
+        working_place TEXT NOT NULL,
+        mobile TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'ACTIVE',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
+    # 9. Officer Accounts table (Verified Officer Account Credentials)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS officer_accounts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        officer_id TEXT NOT NULL UNIQUE,
+        login_id TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        user_id INTEGER NOT NULL UNIQUE,
+        account_status TEXT DEFAULT 'ACTIVE',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (officer_id) REFERENCES officer_registry(officer_id)
+    );
+    """)
+
+    # 10. OTP Verifications table (Prototype OTP verification)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS otp_verifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        officer_id TEXT NOT NULL,
+        otp_code TEXT NOT NULL,
+        verification_token TEXT,
+        expires_at TIMESTAMP NOT NULL,
+        attempts INTEGER DEFAULT 0,
+        verified INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
     # Check and migrate columns safely for existing databases
     cursor.execute("PRAGMA table_info(produce_records)")
     columns = [row["name"] for row in cursor.fetchall()]
     if "price" not in columns:
         cursor.execute("ALTER TABLE produce_records ADD COLUMN price REAL")
+
+    cursor.execute("PRAGMA table_info(users)")
+    user_cols = [row["name"] for row in cursor.fetchall()]
+    if "officer_id" not in user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN officer_id TEXT")
+    if "login_id" not in user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN login_id TEXT")
+
+    cursor.execute("PRAGMA table_info(officer_profiles)")
+    officer_cols = [row["name"] for row in cursor.fetchall()]
+    if "officer_id" not in officer_cols:
+        cursor.execute("ALTER TABLE officer_profiles ADD COLUMN officer_id TEXT")
 
     # Indexes for fast location and produce searches
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_produce_location ON produce_records(state, district, area);")
@@ -159,9 +218,41 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_produce_status ON produce_records(verification_status);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_requests_status ON verification_requests(status);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_location ON officer_profiles(state, district, assigned_area);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_reg_id ON officer_registry(officer_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_acc_officer_id ON officer_accounts(officer_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_acc_login_id ON officer_accounts(login_id);")
+
+    # Automatically populate officer_registry if empty
+    cursor.execute("SELECT COUNT(*) as cnt FROM officer_registry")
+    if cursor.fetchone()["cnt"] == 0:
+        seed_mock_officer_registry(cursor)
 
     conn.commit()
     conn.close()
+
+def seed_mock_officer_registry(cursor):
+    """Seed the mock officer registry with predefined demo records across India."""
+    try:
+        from mock_officer_registry import MOCK_OFFICER_REGISTRY
+        for rec in MOCK_OFFICER_REGISTRY:
+            cursor.execute("""
+            INSERT OR IGNORE INTO officer_registry (
+                officer_id, full_name, designation, department, state, district, working_place, mobile, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                rec["officer_id"],
+                rec["full_name"],
+                rec["designation"],
+                rec.get("department", "Department of Agriculture & Farmers Welfare"),
+                rec["state"],
+                rec["district"],
+                rec["working_place"],
+                rec["mobile"],
+                rec.get("status", "ACTIVE")
+            ))
+    except Exception as e:
+        print(f"Warning: Failed to seed mock officer registry: {e}")
+
 
 if __name__ == "__main__":
     init_db()

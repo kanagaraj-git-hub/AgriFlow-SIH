@@ -17,9 +17,9 @@ def req(path, method='GET', data=None, token=None):
 
 def test_price():
     print("=== Testing Price Feature End-to-End via API ===")
-    # 1. Login as Officer
+    # 1. Login as Officer (using pre-registered Officer ID AGRI-TN-0002)
     s, res = req('/api/auth/login', 'POST', {
-        'identifier': 'ravi.kumar@agri.tn.gov.in',
+        'identifier': 'AGRI-TN-0002',
         'password': 'officer123',
         'role': 'OFFICER'
     })

@@ -4,15 +4,22 @@ from database import get_db_connection
 from auth import require_officer
 from models import OfficerProfileUpdate, ProduceCreate, ProduceUpdate, VerificationAction
 from ws_manager import ws_manager
+from routes_auth import verify_officer_id, verify_officer_otp, resend_officer_otp, create_officer_account
 
 router = APIRouter(prefix="/api/officer", tags=["Officer"])
+
+# Mount verification endpoints under /api/officer as well as /api/auth/officer
+router.add_api_route("/verify-id", verify_officer_id, methods=["POST"])
+router.add_api_route("/verify-otp", verify_officer_otp, methods=["POST"])
+router.add_api_route("/resend-otp", resend_officer_otp, methods=["POST"])
+router.add_api_route("/create-account", create_officer_account, methods=["POST"])
 
 @router.get("/profile")
 async def get_profile(user: Dict[str, Any] = Depends(require_officer)):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT u.id as user_id, u.name, u.email, u.phone,
+        SELECT u.id as user_id, u.name, u.email, u.phone, u.officer_id, u.login_id,
                p.designation, p.department, p.assigned_area, p.district, p.state, p.contact, p.photo_url
         FROM users u
         LEFT JOIN officer_profiles p ON u.id = p.user_id
@@ -22,20 +29,28 @@ async def get_profile(user: Dict[str, Any] = Depends(require_officer)):
     conn.close()
     if not row:
         raise HTTPException(status_code=404, detail="Officer profile not found")
-    return dict(row)
+    data = dict(row)
+    data["is_verified_officer"] = bool(data.get("officer_id"))
+    return data
 
 @router.put("/profile")
 async def update_profile(req: OfficerProfileUpdate, user: Dict[str, Any] = Depends(require_officer)):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Update user name and email
-    cursor.execute("UPDATE users SET name = ?, email = ? WHERE id = ?", (req.name.strip(), req.email.strip() if req.email else None, user["id"]))
+    # Check if officer is verified through registry (official fields cannot be altered)
+    cursor.execute("SELECT officer_id FROM users WHERE id = ?", (user["id"],))
+    u_row = cursor.fetchone()
+    is_verified = bool(u_row and u_row["officer_id"])
 
-    # Update or insert officer profile
-    cursor.execute("SELECT id FROM officer_profiles WHERE user_id = ?", (user["id"],))
-    exists = cursor.fetchone()
-    if exists:
+    if is_verified:
+        # Verified officer: preserve verified official registry fields, update only email and photo_url preferences
+        cursor.execute("UPDATE users SET email = ? WHERE id = ?", (req.email.strip() if req.email else None, user["id"]))
+        cursor.execute("UPDATE officer_profiles SET photo_url = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+                       (req.photo_url.strip() if req.photo_url else None, user["id"]))
+    else:
+        # Fallback for unlinked legacy accounts
+        cursor.execute("UPDATE users SET name = ?, email = ? WHERE id = ?", (req.name.strip(), req.email.strip() if req.email else None, user["id"]))
         cursor.execute("""
             UPDATE officer_profiles
             SET designation = ?, department = ?, assigned_area = ?, district = ?, state = ?, contact = ?, photo_url = ?, updated_at = CURRENT_TIMESTAMP
@@ -50,24 +65,11 @@ async def update_profile(req: OfficerProfileUpdate, user: Dict[str, Any] = Depen
             req.photo_url.strip() if req.photo_url else None,
             user["id"]
         ))
-    else:
-        cursor.execute("""
-            INSERT INTO officer_profiles (user_id, designation, department, assigned_area, district, state, contact, photo_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            user["id"],
-            req.designation.strip(),
-            req.department.strip(),
-            req.assigned_area.strip(),
-            req.district.strip(),
-            req.state.strip(),
-            req.contact.strip(),
-            req.photo_url.strip() if req.photo_url else None
-        ))
     
     conn.commit()
     conn.close()
     return {"status": "success", "message": "Officer profile updated successfully"}
+
 
 @router.get("/dashboard")
 async def get_dashboard(user: Dict[str, Any] = Depends(require_officer)):

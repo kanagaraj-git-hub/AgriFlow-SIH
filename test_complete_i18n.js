@@ -127,7 +127,7 @@ async function run() {
       throw new Error('FAIL: "SIH Platform" found in branding!');
     }
 
-    console.log('\n--- Test 2: Branding Audit across full page text ---');
+    console.log('\n--- Test 2: Branding & UI Audit across full page text ---');
     const fullText = await client.eval(`document.body.innerText`);
     if (fullText.includes('SIH Platform') || fullText.includes('AgriFlowSIH Platform')) {
       throw new Error('FAIL: "SIH Platform" appears in visible text!');
@@ -135,7 +135,16 @@ async function run() {
     if (fullText.includes('Reconnecting...')) {
       throw new Error('FAIL: "Reconnecting..." appears in visible text!');
     }
-    console.log('[PASS] NO "SIH Platform" and NO "Reconnecting..." in visible DOM text.');
+    if (fullText.toLowerCase().includes('live sync')) {
+      throw new Error('FAIL: "Live Sync" appears in visible text!');
+    }
+    const wsStatusEl = await client.eval(`document.getElementById('ws-status')`);
+    if (wsStatusEl !== null) {
+      throw new Error('FAIL: #ws-status element still exists in DOM!');
+    }
+    const wsReadyState = await client.eval(`STATE.ws ? STATE.ws.readyState : null`);
+    console.log('[PASS] WebSocket object readyState (1=OPEN):', wsReadyState);
+    console.log('[PASS] NO "SIH Platform", NO "Reconnecting...", and NO "Live Sync" in visible DOM text.');
 
     console.log('\n--- Test 3: Language Switching: English -> Tamil (ta) ---');
     await client.eval(`

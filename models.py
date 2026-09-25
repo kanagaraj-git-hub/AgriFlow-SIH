@@ -21,9 +21,27 @@ class UserRegister(BaseModel):
     farming_type: Optional[str] = "Conventional"
 
 class UserLogin(BaseModel):
-    identifier: str # Email or mobile
+    identifier: str # Email, mobile, officer_id, or login_id
     password: str
     role: Optional[str] = None # Role filter if supplied
+
+class OfficerVerifyRequest(BaseModel):
+    officer_id: str
+
+class OfficerVerifyOtpRequest(BaseModel):
+    officer_id: str
+    otp: str
+
+class OfficerResendOtpRequest(BaseModel):
+    officer_id: str
+
+class OfficerCreateAccountRequest(BaseModel):
+    officer_id: str
+    verification_token: str
+    login_id: str
+    password: str
+    confirm_password: str
+
 
 class OfficerProfileUpdate(BaseModel):
     name: str
