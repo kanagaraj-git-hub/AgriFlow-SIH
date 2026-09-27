@@ -322,6 +322,10 @@
     "badge_verified": "✓ सत्यापित",
     "avail_qty": "उपलब्ध मात्रा",
     "btn_contact_seller": "विक्रेता से संपर्क करें",
+    "localOfficerRecord": "स्थानीय अधिकारी उपलब्धता",
+    "farmerVerifiedRecord": "सत्यापित किसान उपज",
+    "purchaseRequestsOnlyForFarmer": "यह कृषि अधिकारी द्वारा दर्ज की गई स्थानीय उपलब्धता जानकारी है। खरीद अनुरोध केवल सत्यापित किसान-सूचीबद्ध उपज के लिए उपलब्ध हैं।",
+    "recordType": "रिकॉर्ड प्रकार",
     "priceCol": "मूल्य"
   },
   "officer": {
@@ -509,7 +513,9 @@
     "Pending": "लंबित",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "statuses": {
     "verified": "सत्यापित",
@@ -521,7 +527,9 @@
     "Pending": "लंबित",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "sources": {
     "officerVerified": "अधिकारी सत्यापित",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरीद पूछताछ उत्पादक / स्थानीय अधिकारी को भेजी गई!",
     "statusUpdated": "उपज स्थिति अपडेट की गई",
     "deleted": "उपज रिकॉर्ड हटा दिया गया"
+  },
+  "purchaseRequests": {
+    "title": "खरीद अनुरोध",
+    "subtitle": "आपकी सत्यापित उपज के लिए खरीदारों से प्राप्त आवश्यकताएं",
+    "buyer": "खरीदार",
+    "requestedQuantity": "अनुरोधित मात्रा",
+    "message": "संदेश / आवश्यकताएं",
+    "status": "स्थिति",
+    "actions": "कार्रवाई",
+    "pending": "लंबित",
+    "accept": "स्वीकार करें",
+    "reject": "अस्वीकार करें",
+    "accepted": "स्वीकृत",
+    "rejected": "अस्वीकृत",
+    "noRequests": "अभी कोई खरीद अनुरोध नहीं है",
+    "noRequestsDesc": "जब खरीदार आपकी सत्यापित उपज के लिए पूछताछ भेजेंगे, तो वे यहाँ दिखाई देंगे।",
+    "sentSuccess": "खरीद अनुरोध सफलतापूर्वक भेज दिया गया।",
+    "sentToFarmerDesc": "आपका अनुरोध इस सत्यापित उपज से जुड़े किसान को भेज दिया गया है।",
+    "acceptedSuccess": "खरीद अनुरोध सफलतापूर्वक स्वीकार कर लिया गया।",
+    "rejectedSuccess": "खरीद अनुरोध अस्वीकार कर दिया गया।",
+    "buyerContact": "खरीदार संपर्क",
+    "crop": "फसल",
+    "date": "तारीख"
   }
 }

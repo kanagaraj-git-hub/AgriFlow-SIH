@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ तपासिल्लें",
     "avail_qty": "उपलब्ध प्रमाण",
     "btn_contact_seller": "धाडा",
+    "localOfficerRecord": "स्थानिक अधिकाऱ्याची उपलब्धता",
+    "farmerVerifiedRecord": "तपासणी केल्लें शेतकाराचें उत्पादन",
+    "purchaseRequestsOnlyForFarmer": "ही कृषी अधिकाऱ्यांनी नोंद केल्ली स्थानिक उपलब्धतेची म्हायती. खरेदी विनंती फकत तपासणी केल्ल्या शेतकार-सुचीबध्द उत्पादनां खातीर उपलब्ध आसा.",
+    "recordType": "नोंद प्रकार",
     "priceCol": "मोल"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "तपासिल्लें",
-    "pending": "बाकी",
-    "rejected": "नाकारिल्लें",
+    "pending": "प्रलंबित",
+    "rejected": "न्हयकारलें",
     "available": "उपलब्ध",
     "unavailable": "अनुपलब्ध",
     "Verified": "तपासिल्लें",
-    "Pending": "बाकी",
-    "Rejected": "नाकारिल्लें",
+    "Pending": "प्रलंबित",
+    "Rejected": "न्हयकारलें",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "मान्य केलें",
+    "Accepted": "मान्य केलें"
   },
   "statuses": {
     "verified": "तपासिल्लें",
-    "pending": "बाकी",
-    "rejected": "नाकारिल्लें",
+    "pending": "प्रलंबित",
+    "rejected": "न्हयकारलें",
     "available": "उपलब्ध",
     "unavailable": "अनुपलब्ध",
     "Verified": "तपासिल्लें",
-    "Pending": "बाकी",
-    "Rejected": "नाकारिल्लें",
+    "Pending": "प्रलंबित",
+    "Rejected": "न्हयकारलें",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "मान्य केलें",
+    "Accepted": "मान्य केलें"
   },
   "sources": {
     "officerVerified": "अधिकाऱ्यान तपासिल्लें",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरेदी विचारणा शेतकार/अधिकाऱ्याक धाडली!",
     "statusUpdated": "उत्पादन स्थिती अद्ययावत जाली",
     "deleted": "उत्पादन नोंद काडून उडयली"
+  },
+  "purchaseRequests": {
+    "title": "खरेदी विनंती",
+    "subtitle": "तुमच्या तपासणी केल्ल्या उत्पादनां खातीर खरेदीदारां कडल्यान आयिल्ल्यो चौकशयो",
+    "buyer": "खरेदीदार",
+    "requestedQuantity": "मागणी केल्लो आंकडो",
+    "message": "संदेश / गरजो",
+    "status": "स्थिती",
+    "actions": "कृती",
+    "pending": "प्रलंबित",
+    "accept": "मान्य करात",
+    "reject": "न्हयकारा",
+    "accepted": "मान्य केलें",
+    "rejected": "न्हयकारलें",
+    "noRequests": "अजून खंयचीच खरेदी विनंती ना",
+    "noRequestsDesc": "खरेदीदारांनी चौकशी धाडल्यार त्यो हांगा दिसतलीं.",
+    "sentSuccess": "खरेदी विनंती येशस्वीपणान धाडली.",
+    "sentToFarmerDesc": "तुमची विनंती हे तपासणी केल्ल्या उत्पादना कडेन संबंदीत शेतकाराक धाडल्या.",
+    "acceptedSuccess": "खरेदी विनंती मान्य केली.",
+    "rejectedSuccess": "खरेदी विनंती न्हयकारली.",
+    "buyerContact": "खरेदीदार संपर्क",
+    "crop": "पीक",
+    "date": "तारीख"
   }
 }

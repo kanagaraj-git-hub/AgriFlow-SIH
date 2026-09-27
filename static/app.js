@@ -176,9 +176,9 @@
   window.translateStatus = translateStatus;
 
   function translateSource(sourceType) {
-    if (sourceType === 'OFFICER_ENTRY') {
+    if (sourceType === 'officer_local' || sourceType === 'OFFICER_ENTRY') {
       return t('produce.sourceOfficer', {}, undefined, 'Officer Verified');
-    } else if (sourceType === 'FARMER_VERIFIED') {
+    } else if (sourceType === 'farmer_verified' || sourceType === 'FARMER_VERIFIED') {
       return t('produce.sourceFarmer', {}, undefined, 'Farmer Verified');
     }
     return sourceType;
@@ -216,7 +216,7 @@
     let unitSingular = unit || 'unit';
     if (unitSingular.toLowerCase() === 'tons') unitSingular = 'Ton';
     else if (unitSingular.toLowerCase() === 'quintals') unitSingular = 'Quintal';
-    
+
     const translatedUnit = translateUnit(unitSingular);
     const formattedNum = num.toLocaleString('en-IN', { maximumFractionDigits: 2 });
     return {
@@ -261,7 +261,7 @@
     await loadLocations();
     await checkSession();
     resetOfficerRegistrationState(true);
-    
+
     // Initialize lucide icons
     lucide.createIcons();
 
@@ -360,6 +360,15 @@
         unit: translateUnit(msg.request.quantity_unit)
       }, undefined, `💼 Purchase Inquiry: Buyer requested ${msg.request.requested_quantity} ${msg.request.quantity_unit} of ${msg.crop_name}`);
       showToast(msgText, 'success');
+      if (STATE.currentView === 'farmer-dashboard') {
+        loadFarmerDashboard();
+        loadFarmerPurchaseRequests();
+      }
+    } else if (msg.type === 'PURCHASE_REQUEST_UPDATED') {
+      if (STATE.currentView === 'farmer-dashboard') {
+        loadFarmerDashboard();
+        loadFarmerPurchaseRequests();
+      }
     } else if (msg.type === 'DEMO_RESET') {
       const msgText = t('notifications.demoReset', {}, undefined, `🔄 Demo data has been reset to initial state`);
       showToast(msgText, 'info');
@@ -719,7 +728,7 @@
     let html = '';
     items.forEach(p => {
       const emoji = getCropEmoji(p.crop_name);
-      const isOfficer = p.source_type === 'OFFICER_ENTRY';
+      const isOfficer = p.source_type === 'officer_local' || p.source_type === 'OFFICER_ENTRY';
       const sourceBadgeClass = isOfficer ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800';
       const sourceIcon = isOfficer ? 'shield-check' : 'tractor';
       const priceInfo = formatProducePrice(p.price, p.unit);
@@ -815,7 +824,7 @@
       document.getElementById('pd-emoji').innerText = getCropEmoji(data.crop_name);
       document.getElementById('pd-location').innerText = `${data.area}, ${data.district}, ${data.state}`;
       document.getElementById('pd-qty').innerText = `${data.quantity} ${translateUnit(data.unit)}`;
-      
+
       const priceInfo = formatProducePrice(data.price, data.unit);
       const priceEl = document.getElementById('pd-price');
       if (priceEl) {
@@ -824,16 +833,37 @@
       document.getElementById('pd-quality').innerText = translateQuality(data.quality || 'Grade A');
       document.getElementById('pd-avail-date').innerText = data.availability_date;
 
-      const sourceLabel = translateSource(data.source_type);
-      const actorName = data.source_type === 'OFFICER_ENTRY' ? (data.officer_name || '') : (data.farmer_name || '');
+      const isOfficer = data.source_type === 'officer_local' || data.source_type === 'OFFICER_ENTRY';
+      const sourceLabel = isOfficer
+        ? t('produce.sourceOfficer', {}, undefined, 'Officer Verified')
+        : t('produce.sourceFarmer', {}, undefined, 'Farmer Verified');
+      const actorName = isOfficer ? (data.officer_name || '') : (data.farmer_name || '');
       document.getElementById('pd-source').innerText = actorName ? `${sourceLabel} (${actorName})` : sourceLabel;
+
+      const recordTypeEl = document.getElementById('pd-record-type');
+      if (recordTypeEl) {
+        recordTypeEl.innerText = isOfficer
+          ? t('produce.localOfficerRecord', {}, undefined, 'Local Officer Availability')
+          : t('produce.farmerVerifiedRecord', {}, undefined, 'Verified Farmer Produce');
+      }
+
+      // Handle Purchase Request form vs officer notice (Requirements 3, 4, 8)
+      const officerNoticeEl = document.getElementById('pd-officer-notice');
+      const purchaseSectionEl = document.getElementById('pd-purchase-section');
+      if (isOfficer) {
+        if (officerNoticeEl) officerNoticeEl.classList.remove('hidden');
+        if (purchaseSectionEl) purchaseSectionEl.classList.add('hidden');
+      } else {
+        if (officerNoticeEl) officerNoticeEl.classList.add('hidden');
+        if (purchaseSectionEl) purchaseSectionEl.classList.remove('hidden');
+      }
 
       const badgeEl = document.getElementById('pd-status-badge');
       if (badgeEl) {
         badgeEl.innerText = t('produce.verifiedBadge', {}, undefined, '✓ VERIFIED');
       }
 
-      document.getElementById('pd-notes').innerText = data.notes || "Official local agricultural entry inspected and verified.";
+      document.getElementById('pd-notes').innerText = data.notes || (isOfficer ? "Official local agricultural entry inspected and verified." : "Verified farmer crop harvest submission.");
 
       // Set form fields for purchase request
       document.getElementById('pr-produce-id').value = data.id;
@@ -870,7 +900,8 @@
       });
 
       if (res.ok) {
-        showToast(t('notifications.inquirySent', {}, undefined, "✓ Purchase inquiry sent to producer / local officer!"), "success");
+        const successMsg = `${t('purchaseRequests.sentSuccess', {}, undefined, "Purchase request sent successfully.")} ${t('purchaseRequests.sentToFarmerDesc', {}, undefined, "Your request has been sent to the farmer associated with this verified produce.")}`;
+        showToast(successMsg, "success");
         closeModal('produce-details-modal');
         document.getElementById('purchase-request-form').reset();
       } else {
@@ -1267,6 +1298,19 @@
           badge.classList.add('hidden');
         }
 
+        // Update pending purchase inquiries badge
+        if (dash.stats.pending_purchase_requests !== undefined) {
+          const prBadge = document.getElementById('farmer-pr-pending-badge');
+          if (prBadge) {
+            if (dash.stats.pending_purchase_requests > 0) {
+              prBadge.innerText = dash.stats.pending_purchase_requests;
+              prBadge.classList.remove('hidden');
+            } else {
+              prBadge.classList.add('hidden');
+            }
+          }
+        }
+
         // Render assigned officer card
         const offCard = document.getElementById('farmer-officer-card');
         if (dash.assigned_officer) {
@@ -1284,6 +1328,9 @@
         STATE.farmerRequests = await reqRes.json();
         renderFarmerRequests(STATE.farmerRequests);
       }
+
+      // Also load farmer purchase requests
+      await loadFarmerPurchaseRequests();
     } catch (err) {
       console.error("Failed to load farmer dashboard:", err);
     }
@@ -1357,6 +1404,164 @@
     container.innerHTML = html;
     lucide.createIcons();
   }
+
+  async function loadFarmerPurchaseRequests() {
+    if (!STATE.token || (STATE.user?.role || '').toLowerCase() !== 'farmer') return;
+    try {
+      const res = await fetch('/api/farmer/purchase-requests', {
+        headers: { 'Authorization': `Bearer ${STATE.token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        STATE.farmerPurchaseRequests = data;
+        renderFarmerPurchaseRequests(data);
+        const pendingCount = data.filter(r => (r.status || '').toLowerCase() === 'pending').length;
+        const badge = document.getElementById('farmer-pr-pending-badge');
+        if (badge) {
+          if (pendingCount > 0) {
+            badge.innerText = `${pendingCount} ${t('purchaseRequests.pending', {}, undefined, 'Pending')}`;
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load farmer purchase requests:", err);
+    }
+  }
+
+  function renderFarmerPurchaseRequests(requests) {
+    const container = document.getElementById('farmer-purchase-requests-list');
+    const empty = document.getElementById('farmer-purchase-requests-empty');
+    if (!container) return;
+
+    if (!requests || requests.length === 0) {
+      container.innerHTML = '';
+      if (empty) empty.classList.remove('hidden');
+      return;
+    }
+
+    if (empty) empty.classList.add('hidden');
+
+    let html = '';
+    requests.forEach(r => {
+      const statusLower = (r.status || 'pending').toLowerCase();
+      let statusBadge = '';
+      let actionButtons = '';
+
+      if (statusLower === 'pending') {
+        statusBadge = `<span class="badge-pending text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">🟡 ${escapeHtml(t('purchaseRequests.pending', {}, undefined, 'Pending'))}</span>`;
+        actionButtons = `
+          <div class="flex items-center space-x-2 pt-2 border-t border-slate-100">
+            <button onclick="handleAcceptPurchaseRequest(${r.id})" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition flex items-center space-x-1 shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>${escapeHtml(t('purchaseRequests.accept', {}, undefined, 'Accept'))}</span>
+            </button>
+            <button onclick="handleRejectPurchaseRequest(${r.id})" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-700 bg-red-50 text-xs font-bold hover:bg-red-100 transition flex items-center space-x-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              <span>${escapeHtml(t('purchaseRequests.reject', {}, undefined, 'Reject'))}</span>
+            </button>
+          </div>
+        `;
+      } else if (statusLower === 'accepted') {
+        statusBadge = `<span class="badge-verified text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">🟢 ✓ ${escapeHtml(t('purchaseRequests.accepted', {}, undefined, 'Accepted'))}</span>`;
+      } else {
+        statusBadge = `<span class="badge-rejected text-xs font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-200">🔴 ${escapeHtml(t('purchaseRequests.rejected', {}, undefined, 'Rejected'))}</span>`;
+      }
+
+      const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+
+      html += `
+        <div class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-brand-300 transition space-y-3">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center space-x-3">
+              <span class="text-3xl p-2 bg-slate-50 rounded-xl border border-slate-100">${getCropEmoji(r.crop_name)}</span>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h4 class="text-base font-bold text-slate-900">${escapeHtml(translateCrop(r.crop_name))}</h4>
+                  ${r.quality_grade ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${escapeHtml(r.quality_grade)}</span>` : ''}
+                </div>
+                <p class="text-xs text-slate-500 font-medium">${escapeHtml(t('purchaseRequests.buyer', {}, undefined, 'Buyer'))}: <strong class="text-slate-800">${escapeHtml(r.buyer_name)}</strong> &bull; <span class="text-slate-600">${escapeHtml(r.buyer_contact)}</span></p>
+              </div>
+            </div>
+            ${statusBadge}
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <div>
+              <span class="text-slate-400 block text-[10px]">${escapeHtml(t('purchaseRequests.requestedQuantity', {}, undefined, 'Requested Quantity'))}</span>
+              <span class="font-bold text-emerald-800">${r.requested_quantity} ${escapeHtml(translateUnit(r.requested_unit))}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px]">${escapeHtml(t('common.location', {}, undefined, 'Location'))}</span>
+              <span class="font-bold text-slate-800">${escapeHtml(r.area || '')}${r.district ? ', ' + escapeHtml(r.district) : ''}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px]">${escapeHtml(t('purchaseRequests.date', {}, undefined, 'Date'))}</span>
+              <span class="font-medium text-slate-700">${escapeHtml(dateStr)}</span>
+            </div>
+          </div>
+
+          ${r.message ? `
+            <div class="text-xs p-2.5 rounded-lg bg-slate-50 text-slate-800 border border-slate-100">
+              <span class="font-bold block text-[11px] text-slate-500 mb-0.5">${escapeHtml(t('purchaseRequests.message', {}, undefined, 'Message / Requirements'))}:</span>
+              <p class="italic text-slate-700">"${escapeHtml(r.message)}"</p>
+            </div>
+          ` : ''}
+
+          ${actionButtons}
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  async function handleAcceptPurchaseRequest(id) {
+    try {
+      const res = await fetch(`/api/farmer/purchase-requests/${id}/accept`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${STATE.token}`
+        }
+      });
+      if (res.ok) {
+        showToast(t('purchaseRequests.acceptedSuccess', {}, undefined, 'Purchase request accepted successfully.'), 'success');
+        await loadFarmerDashboard();
+      } else {
+        const err = await res.json();
+        showToast(err.detail || 'Failed to accept purchase request', 'error');
+      }
+    } catch (e) {
+      showToast('Error accepting purchase request', 'error');
+    }
+  }
+
+  async function handleRejectPurchaseRequest(id) {
+    try {
+      const res = await fetch(`/api/farmer/purchase-requests/${id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${STATE.token}`
+        }
+      });
+      if (res.ok) {
+        showToast(t('purchaseRequests.rejectedSuccess', {}, undefined, 'Purchase request rejected.'), 'info');
+        await loadFarmerDashboard();
+      } else {
+        const err = await res.json();
+        showToast(err.detail || 'Failed to reject purchase request', 'error');
+      }
+    } catch (e) {
+      showToast('Error rejecting purchase request', 'error');
+    }
+  }
+
+  window.loadFarmerPurchaseRequests = loadFarmerPurchaseRequests;
+  window.handleAcceptPurchaseRequest = handleAcceptPurchaseRequest;
+  window.handleRejectPurchaseRequest = handleRejectPurchaseRequest;
 
   async function handleFarmerCropSubmit(e) {
     e.preventDefault();
@@ -1874,10 +2079,19 @@
     officerRegState.otpTimerInterval = setInterval(updateDisplay, 1000);
   }
 
-  async function handleVerifyOfficerId() {
+  async function handleVerifyOfficerId(e) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
+    if (officerRegState && officerRegState.isVerifying) {
+      return;
+    }
+
     const input = document.getElementById('officer-verify-id-input');
     const errBox = document.getElementById('officer-id-error');
     const btn = document.getElementById('btn-verify-officer-id');
+    const btnText = document.getElementById('btn-verify-text');
     const officerId = input ? input.value.trim().toUpperCase() : '';
 
     if (errBox) {
@@ -1896,14 +2110,23 @@
     }
 
     try {
-      if (btn) btn.disabled = true;
+      if (officerRegState) officerRegState.isVerifying = true;
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+      if (btnText) {
+        btnText.innerHTML = `<span class="inline-flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>${escapeHtml(t('auth.verifying', {}, undefined, 'Verifying...'))}</span></span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
       const res = await fetch('/api/auth/officer/verify-id', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ officer_id: officerId })
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
         officerRegState.officerId = data.officer_id;
@@ -1932,23 +2155,23 @@
             errBox.innerHTML = `
               <div class="font-bold text-amber-900 text-sm flex items-center gap-1.5">
                 <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                <span>${escapeHtml(t('auth.accountAlreadyExists', {}, undefined, 'Officer account already exists'))}</span>
+                <span data-i18n="auth.accountAlreadyExists">${escapeHtml(t('auth.accountAlreadyExists', {}, undefined, 'Officer account already exists'))}</span>
               </div>
-              <p class="text-amber-800 text-xs leading-relaxed">${escapeHtml(data.detail || t('auth.accountAlreadyExistsMsg', {}, undefined, 'An AgriFlow account has already been created for this Officer ID. Please use Officer Login.'))}</p>
+              <p class="text-amber-800 text-xs leading-relaxed" data-i18n="auth.accountAlreadyExistsMsg">${escapeHtml(data.detail || t('auth.accountAlreadyExistsMsg', {}, undefined, 'An AgriFlow account has already been created for this Officer ID. Please use Officer Login.'))}</p>
               <button type="button" onclick="goToOfficerLoginPrefilled('${escapeHtml(officerId)}')" class="w-full py-2 px-3 text-xs font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center gap-1.5">
-                <span>${escapeHtml(t('auth.proceedToLogin', {}, undefined, 'Proceed to Officer Login'))}</span> →
+                <span data-i18n="auth.proceedToLogin">${escapeHtml(t('auth.proceedToLogin', {}, undefined, 'Proceed to Officer Login'))}</span> →
               </button>
             `;
             if (window.lucide) lucide.createIcons();
           } else {
-            // 404 Not Found or other error
+            // 400 or 404 Not Found or other error
             errBox.className = 'p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-900 text-xs space-y-1';
             errBox.innerHTML = `
               <div class="font-bold text-red-900 text-sm flex items-center gap-1.5">
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 shrink-0"></i>
-                <span>${escapeHtml(t('auth.invalidOfficerId', {}, undefined, 'Officer ID Not Found'))}</span>
+                <span data-i18n="auth.invalidOfficerId">${escapeHtml(t('auth.invalidOfficerId', {}, undefined, 'Invalid Officer ID'))}</span>
               </div>
-              <p class="text-red-800 text-xs leading-relaxed">${escapeHtml(data.detail || t('auth.invalidOfficerIdMsg', {}, undefined, 'Officer ID not found. Please enter a valid Agriculture Officer ID.'))}</p>
+              <p class="text-red-800 text-xs leading-relaxed" data-i18n="auth.invalidOfficerIdMsg">${escapeHtml(t('auth.invalidOfficerIdMsg', {}, undefined, 'Please enter a valid registered Agriculture Officer ID.'))}</p>
             `;
             if (window.lucide) lucide.createIcons();
           }
@@ -1962,7 +2185,14 @@
         errBox.classList.remove('hidden');
       }
     } finally {
-      if (btn) btn.disabled = false;
+      if (officerRegState) officerRegState.isVerifying = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+      if (btnText) {
+        btnText.textContent = t('auth.verifyOfficerId', {}, undefined, 'Verify Officer ID');
+      }
     }
   }
 
@@ -1974,7 +2204,10 @@
     }
   }
 
-  async function handleVerifyOtp() {
+  async function handleVerifyOtp(e) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
     const input = document.getElementById('officer-otp-input');
     const errBox = document.getElementById('officer-otp-error');
     const btn = document.getElementById('btn-verify-otp');
@@ -1996,7 +2229,10 @@
     }
 
     try {
-      if (btn) btn.disabled = true;
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
       const res = await fetch('/api/auth/officer/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2059,7 +2295,10 @@
         errBox.classList.remove('hidden');
       }
     } finally {
-      if (btn) btn.disabled = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
     }
   }
 
@@ -2318,7 +2557,12 @@
     }
   }
 
-  // Preserve backwards compatibility
+  // Preserve backwards compatibility and global access
+  window.openAuthModal = openAuthModal;
+  window.switchAuthTab = switchAuthTab;
+  window.setAuthRole = setAuthRole;
+  window.navigate = navigate;
+  window.logout = logout;
   window.handleRegisterSubmit = handleFarmerRegisterSubmit;
   window.handleFarmerRegisterSubmit = handleFarmerRegisterSubmit;
   window.handleVerifyOfficerId = handleVerifyOfficerId;

@@ -322,6 +322,10 @@
     "badge_verified": "✓ ଯାଞ୍ଚ ହୋଇଛି",
     "avail_qty": "ଉପଲବ୍ଧ ପରିମାଣ",
     "btn_contact_seller": "ପଠାନ୍ତୁ",
+    "localOfficerRecord": "ସ୍ଥାନୀୟ ଅଧିକାରୀ ଉପଲବ୍ଧତା",
+    "farmerVerifiedRecord": "ଯାଞ୍ଚ ହୋଇଥିବା କୃଷକ ଉତ୍ପାଦ",
+    "purchaseRequestsOnlyForFarmer": "ଏହା କୃଷି ଅଧିକାରୀଙ୍କ ଦ୍ୱାରା ପ୍ରଦତ୍ତ ସ୍ଥାନୀୟ ଉପଲବ୍ଧତା ସୂଚନା। କ୍ରୟ ଅନୁରୋଧ କେବଳ ଯାଞ୍ଚ ହୋଇଥିବା କୃଷକ ତାଲିକାଭୁକ୍ତ ଉତ୍ପାଦ ପାଇଁ ଉପଲବ୍ଧ।",
+    "recordType": "ରେକର୍ଡ଼ ପ୍ରକାର",
     "priceCol": "ମୂଲ୍ୟ"
   },
   "officer": {
@@ -502,26 +506,30 @@
   "status": {
     "verified": "ଯାଞ୍ଚ ହୋଇଛି",
     "pending": "ବକେୟା",
-    "rejected": "ପ୍ରତ୍ୟାଖ୍ୟାତ",
+    "rejected": "ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି",
     "available": "ଉପଲବ୍ଧ",
     "unavailable": "ଅନୁପଲବ୍ଧ",
     "Verified": "ଯାଞ୍ଚ ହୋଇଛି",
     "Pending": "ବକେୟା",
-    "Rejected": "ପ୍ରତ୍ୟାଖ୍ୟାତ",
+    "Rejected": "ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି",
     "Available": "ଉପଲବ୍ଧ",
-    "Unavailable": "ଅନୁପଲବ୍ଧ"
+    "Unavailable": "ଅନୁପଲବ୍ଧ",
+    "accepted": "ଗ୍ରହଣ ହୋଇଛି",
+    "Accepted": "ଗ୍ରହଣ ହୋଇଛି"
   },
   "statuses": {
     "verified": "ଯାଞ୍ଚ ହୋଇଛି",
     "pending": "ବକେୟା",
-    "rejected": "ପ୍ରତ୍ୟାଖ୍ୟାତ",
+    "rejected": "ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି",
     "available": "ଉପଲବ୍ଧ",
     "unavailable": "ଅନୁପଲବ୍ଧ",
     "Verified": "ଯାଞ୍ଚ ହୋଇଛି",
     "Pending": "ବକେୟା",
-    "Rejected": "ପ୍ରତ୍ୟାଖ୍ୟାତ",
+    "Rejected": "ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି",
     "Available": "ଉପଲବ୍ଧ",
-    "Unavailable": "ଅନୁପଲବ୍ଧ"
+    "Unavailable": "ଅନୁପଲବ୍ଧ",
+    "accepted": "ଗ୍ରହଣ ହୋଇଛି",
+    "Accepted": "ଗ୍ରହଣ ହୋଇଛି"
   },
   "sources": {
     "officerVerified": "ଅଧିକାରୀଙ୍କ ଦ୍ୱାରା ଯାଞ୍ଚିତ",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ କ୍ରୟ ଅନୁରୋଧ ଉତ୍ପାଦକ / ଅଧିକାରୀଙ୍କୁ ପଠାଗଲା!",
     "statusUpdated": "ଉତ୍ପାଦନ ସ୍ଥିତି ଅଦ୍ୟତନ ହେଲା",
     "deleted": "ଉତ୍ପାଦନ ରେକର୍ଡ ବିଲୋପ କରାଗଲା"
+  },
+  "purchaseRequests": {
+    "title": "କ୍ରୟ ଅନୁରୋଧ",
+    "subtitle": "ଆପଣଙ୍କ ଯାଞ୍ଚ ହୋଇଥିବା ଉତ୍ପାଦ ପାଇଁ କ୍ରେତାମାନଙ୍କ ଠାରୁ ଆସିଥିବା ଅନୁସନ୍ଧାନ",
+    "buyer": "କ୍ରେତା",
+    "requestedQuantity": "ଅନୁରୋଧିତ ପରିମାଣ",
+    "message": "ବାର୍ତ୍ତା / ଆବଶ୍ୟକତା",
+    "status": "ସ୍ଥିତି",
+    "actions": "ପଦକ୍ଷେପ",
+    "pending": "ବକେୟା",
+    "accept": "ଗ୍ରହଣ କରନ୍ତୁ",
+    "reject": "ପ୍ରତ୍ୟାଖ୍ୟାନ କରନ୍ତୁ",
+    "accepted": "ଗ୍ରହଣ ହୋଇଛି",
+    "rejected": "ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି",
+    "noRequests": "କୌଣସି କ୍ରୟ ଅନୁରୋଧ ଏପର୍ଯ୍ୟନ୍ତ ନାହିଁ",
+    "noRequestsDesc": "କ୍ରେତାମାନେ ଅନୁରୋଧ ପଠାଇଲେ ତାହା ଏଠାରେ ଦେଖାଯିବ।",
+    "sentSuccess": "କ୍ରୟ ଅନୁରୋଧ ସଫଳତାର ସହ ପଠାଗଲା।",
+    "sentToFarmerDesc": "ଏହି ଉତ୍ପାଦ ସହିତ ଜଡ଼ିତ କୃଷକଙ୍କ ନିକଟକୁ ଆପଣଙ୍କ ଅନୁରୋଧ ପଠାଯାଇଛି।",
+    "acceptedSuccess": "କ୍ରୟ ଅନୁରୋଧ ଗ୍ରହଣ କରାଗଲା।",
+    "rejectedSuccess": "କ୍ରୟ ଅନୁରୋଧ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଗଲା।",
+    "buyerContact": "କ୍ରେତା ସମ୍ପର୍କ",
+    "crop": "ଫସଲ",
+    "date": "ତାରିଖ"
   }
 }

@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ VERIFIED",
     "avail_qty": "Available Quantity",
     "btn_contact_seller": "Contact Seller",
+    "localOfficerRecord": "Local Officer Availability",
+    "farmerVerifiedRecord": "Verified Farmer Produce",
+    "purchaseRequestsOnlyForFarmer": "This is local availability information reported by an Agriculture Officer. Purchase requests are available only for verified farmer-listed produce.",
+    "recordType": "Record Type",
     "priceCol": "Price"
   },
   "officer": {
@@ -509,7 +513,9 @@
     "Pending": "Pending",
     "Rejected": "Rejected",
     "Available": "Available",
-    "Unavailable": "Unavailable"
+    "Unavailable": "Unavailable",
+    "accepted": "Accepted",
+    "Accepted": "Accepted"
   },
   "statuses": {
     "verified": "Verified",
@@ -521,7 +527,9 @@
     "Pending": "Pending",
     "Rejected": "Rejected",
     "Available": "Available",
-    "Unavailable": "Unavailable"
+    "Unavailable": "Unavailable",
+    "accepted": "Accepted",
+    "Accepted": "Accepted"
   },
   "sources": {
     "officerVerified": "Officer Verified",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ Purchase inquiry sent to producer / local officer!",
     "statusUpdated": "Produce status updated",
     "deleted": "Produce record deleted"
+  },
+  "purchaseRequests": {
+    "title": "Purchase Requests",
+    "subtitle": "Inquiries received from prospective buyers for your verified produce",
+    "buyer": "Buyer",
+    "requestedQuantity": "Requested Quantity",
+    "message": "Message / Requirements",
+    "status": "Status",
+    "actions": "Actions",
+    "pending": "Pending",
+    "accept": "Accept",
+    "reject": "Reject",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "noRequests": "No purchase requests yet",
+    "noRequestsDesc": "When buyers send purchase inquiries for your verified produce, they will appear here.",
+    "sentSuccess": "Purchase request sent successfully.",
+    "sentToFarmerDesc": "Your request has been sent to the farmer associated with this verified produce.",
+    "acceptedSuccess": "Purchase request accepted successfully.",
+    "rejectedSuccess": "Purchase request rejected.",
+    "buyerContact": "Buyer Contact",
+    "crop": "Crop",
+    "date": "Date"
   }
 }

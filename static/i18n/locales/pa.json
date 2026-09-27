@@ -322,6 +322,10 @@
     "badge_verified": "✓ ਪ੍ਰਮਾਣਿਤ",
     "avail_qty": "ਉਪਲਬਧ ਮਾਤਰਾ",
     "btn_contact_seller": "ਭੇਜੋ",
+    "localOfficerRecord": "ਸਥਾਨਕ ਅਧਿਕਾਰੀ ਉਪਲਬਧਤਾ",
+    "farmerVerifiedRecord": "ਪ੍ਰਮਾਣਿਤ ਕਿਸਾਨ ਉਪਜ",
+    "purchaseRequestsOnlyForFarmer": "ਇਹ ਖੇਤੀਬਾੜੀ ਅਧਿਕਾਰੀ ਦੁਆਰਾ ਦਰਜ ਕੀਤੀ ਸਥਾਨਕ ਉਪਲਬਧਤਾ ਦੀ ਜਾਣਕਾਰੀ ਹੈ। ਖਰੀਦ ਬੇਨਤੀਆਂ ਸਿਰਫ ਪ੍ਰਮਾਣਿਤ ਕਿਸਾਨ ਸੂਚੀਬੱਧ ਉਪਜ ਲਈ ਉਪਲਬਧ ਹਨ।",
+    "recordType": "ਰਿਕਾਰਡ ਕਿਸਮ",
     "priceCol": "ਕੀਮਤ"
   },
   "officer": {
@@ -502,26 +506,30 @@
   "status": {
     "verified": "ਪ੍ਰਮਾਣਿਤ",
     "pending": "ਬਕਾਇਆ",
-    "rejected": "ਰੱਦ ਕੀਤਾ ਗਿਆ",
+    "rejected": "ਰੱਦ ਕੀਤਾ",
     "available": "ਉਪਲਬਧ",
     "unavailable": "ਨਾ-ਉਪਲਬਧ",
     "Verified": "ਪ੍ਰਮਾਣਿਤ",
     "Pending": "ਬਕਾਇਆ",
-    "Rejected": "ਰੱਦ ਕੀਤਾ ਗਿਆ",
+    "Rejected": "ਰੱਦ ਕੀਤਾ",
     "Available": "ਉਪਲਬਧ",
-    "Unavailable": "ਨਾ-ਉਪਲਬਧ"
+    "Unavailable": "ਨਾ-ਉਪਲਬਧ",
+    "accepted": "ਸਵੀਕਾਰ ਕੀਤਾ",
+    "Accepted": "ਸਵੀਕਾਰ ਕੀਤਾ"
   },
   "statuses": {
     "verified": "ਪ੍ਰਮਾਣਿਤ",
     "pending": "ਬਕਾਇਆ",
-    "rejected": "ਰੱਦ ਕੀਤਾ ਗਿਆ",
+    "rejected": "ਰੱਦ ਕੀਤਾ",
     "available": "ਉਪਲਬਧ",
     "unavailable": "ਨਾ-ਉਪਲਬਧ",
     "Verified": "ਪ੍ਰਮਾਣਿਤ",
     "Pending": "ਬਕਾਇਆ",
-    "Rejected": "ਰੱਦ ਕੀਤਾ ਗਿਆ",
+    "Rejected": "ਰੱਦ ਕੀਤਾ",
     "Available": "ਉਪਲਬਧ",
-    "Unavailable": "ਨਾ-ਉਪਲਬਧ"
+    "Unavailable": "ਨਾ-ਉਪਲਬਧ",
+    "accepted": "ਸਵੀਕਾਰ ਕੀਤਾ",
+    "Accepted": "ਸਵੀਕਾਰ ਕੀਤਾ"
   },
   "sources": {
     "officerVerified": "ਅਫ਼ਸਰ ਦੁਆਰਾ ਪ੍ਰਮਾਣਿਤ",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ ਖਰੀਦ ਪੁੱਛਗਿੱਛ ਉਤਪਾਦਕ / ਅਫ਼ਸਰ ਨੂੰ ਭੇਜੀ ਗਈ!",
     "statusUpdated": "ਉਤਪਾਦ ਸਥਿਤੀ ਅਪਡੇਟ ਹੋਈ",
     "deleted": "ਉਤਪਾਦ ਰਿਕਾਰਡ ਮਿਟਾਇਆ ਗਿਆ"
+  },
+  "purchaseRequests": {
+    "title": "ਖਰੀਦ ਬੇਨਤੀਆਂ",
+    "subtitle": "ਤੁਹਾਡੀ ਪ੍ਰਮਾਣਿਤ ਉਪਜ ਲਈ ਖਰੀਦਦਾਰਾਂ ਤੋਂ ਪ੍ਰਾਪਤ ਪੁੱਛਗਿੱਛ",
+    "buyer": "ਖਰੀਦਦਾਰ",
+    "requestedQuantity": "ਮੰਗੀ ਗਈ ਮਾਤਰਾ",
+    "message": "ਸੁਨੇਹਾ / ਲੋੜਾਂ",
+    "status": "ਸਥਿਤੀ",
+    "actions": "ਕਾਰਵਾਈਆਂ",
+    "pending": "ਬਕਾਇਆ",
+    "accept": "ਸਵੀਕਾਰ ਕਰੋ",
+    "reject": "ਰੱਦ ਕਰੋ",
+    "accepted": "ਸਵੀਕਾਰ ਕੀਤਾ",
+    "rejected": "ਰੱਦ ਕੀਤਾ",
+    "noRequests": "ਅਜੇ ਕੋਈ ਖਰੀਦ ਬੇਨਤੀ ਨਹੀਂ",
+    "noRequestsDesc": "ਜਦੋਂ ਖਰੀਦਦਾਰ ਪੁੱਛਗਿੱਛ ਭੇਜਣਗੇ, ਤਾਂ ਉਹ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੀਆਂ।",
+    "sentSuccess": "ਖਰੀਦ ਬੇਨਤੀ ਸਫਲਤਾਪੂਰਵਕ ਭੇਜੀ ਗਈ।",
+    "sentToFarmerDesc": "ਤੁਹਾਡੀ ਬੇਨਤੀ ਇਸ ਪ੍ਰਮਾਣਿਤ ਉਪਜ ਨਾਲ ਜੁੜੇ ਕਿਸਾਨ ਨੂੰ ਭੇਜ ਦਿੱਤੀ ਗਈ ਹੈ।",
+    "acceptedSuccess": "ਖਰੀਦ ਬੇਨਤੀ ਸਵੀਕਾਰ ਕਰ ਲਈ ਗਈ ਹੈ।",
+    "rejectedSuccess": "ਖਰੀਦ ਬੇਨਤੀ ਰੱਦ ਕੀਤੀ ਗਈ।",
+    "buyerContact": "ਖਰੀਦਦਾਰ ਸੰਪਰਕ",
+    "crop": "ਫਸਲ",
+    "date": "ਮਿਤੀ"
   }
 }

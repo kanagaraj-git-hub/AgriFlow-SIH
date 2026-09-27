@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Dict, Any, List, Optional
 from database import get_db_connection
 from auth import require_farmer
-from models import FarmerProfileUpdate, FarmerCropSubmission
+from models import FarmerProfileUpdate, FarmerCropSubmission, PurchaseRequestStatusUpdate
 from ws_manager import ws_manager
 
 router = APIRouter(prefix="/api/farmer", tags=["Farmer"])
@@ -96,6 +96,13 @@ async def get_dashboard(user: Dict[str, Any] = Depends(require_farmer)):
     cursor.execute("SELECT COUNT(*) as count FROM verification_requests WHERE farmer_id = ? AND status = 'REJECTED'", (user["id"],))
     rejected_count = cursor.fetchone()["count"]
 
+    # Purchase Requests Stats for this Farmer
+    cursor.execute("SELECT COUNT(*) as count FROM purchase_requests WHERE farmer_id = ?", (user["id"],))
+    total_purchase_requests = cursor.fetchone()["count"]
+
+    cursor.execute("SELECT COUNT(*) as count FROM purchase_requests WHERE farmer_id = ? AND LOWER(status) = 'pending'", (user["id"],))
+    pending_purchase_requests = cursor.fetchone()["count"]
+
     # Local Officer Information for this farmer
     cursor.execute("""
         SELECT u.name, u.phone, u.email, op.designation, op.department, op.assigned_area, op.district, op.state
@@ -132,7 +139,9 @@ async def get_dashboard(user: Dict[str, Any] = Depends(require_farmer)):
             "total_crops": total_crops,
             "pending_count": pending_count,
             "verified_count": verified_count,
-            "rejected_count": rejected_count
+            "rejected_count": rejected_count,
+            "total_purchase_requests": total_purchase_requests,
+            "pending_purchase_requests": pending_purchase_requests
         },
         "assigned_officer": officer_info
     }
@@ -185,7 +194,7 @@ async def submit_crop(req: FarmerCropSubmission, user: Dict[str, Any] = Depends(
             crop_name, quantity, unit, area, village, district, state,
             produce_type, quality, availability_date, expected_harvest_date,
             source_type, farmer_id, officer_id, verification_status, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Field Crop', ?, ?, ?, 'FARMER_VERIFIED', ?, ?, 'PENDING', ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Field Crop', ?, ?, ?, 'farmer_verified', ?, ?, 'PENDING', ?)
     """, (
         req.crop_name.strip(),
         req.expected_quantity,
@@ -247,3 +256,133 @@ async def submit_crop(req: FarmerCropSubmission, user: Dict[str, Any] = Depends(
         "message": "Crop submitted successfully and routed to local Agriculture Officer for verification.",
         "request": new_request
     }
+
+# =====================================================================
+# FARMER PURCHASE REQUESTS ENDPOINTS (Sections 5, 6, 7, 10)
+# =====================================================================
+
+@router.get("/purchase-requests")
+async def get_farmer_purchase_requests(user: Dict[str, Any] = Depends(require_farmer)):
+    """
+    List purchase requests received for this authenticated farmer's verified produce.
+    Securely filters by farmer_id to prevent any cross-farmer data exposure.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT pr.id, pr.produce_id, pr.farmer_id, pr.buyer_name, pr.buyer_contact,
+               pr.requested_quantity, pr.quantity_unit, pr.quantity_unit as requested_unit,
+               pr.message, pr.status, pr.created_at, pr.updated_at,
+               p.crop_name, p.unit as produce_unit, p.area, p.district, p.state, p.price, p.quality,
+               p.source_type
+        FROM purchase_requests pr
+        JOIN produce_records p ON pr.produce_id = p.id
+        WHERE pr.farmer_id = ?
+        ORDER BY CASE WHEN LOWER(pr.status) = 'pending' THEN 0 ELSE 1 END, pr.id DESC
+    """, (user["id"],))
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return rows
+
+@router.post("/purchase-requests/{id}/accept")
+async def accept_purchase_request(id: int, user: Dict[str, Any] = Depends(require_farmer)):
+    """
+    Farmer accepts a pending purchase request for their verified produce.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM purchase_requests WHERE id = ?", (id,))
+    req_row = cursor.fetchone()
+    if not req_row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Purchase request not found")
+    if req_row["farmer_id"] != user["id"]:
+        conn.close()
+        raise HTTPException(status_code=403, detail="You do not have permission to manage this purchase request")
+
+    cursor.execute("""
+        UPDATE purchase_requests
+        SET status = 'accepted', updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+    """, (id,))
+    conn.commit()
+
+    cursor.execute("""
+        SELECT pr.*, p.crop_name
+        FROM purchase_requests pr
+        JOIN produce_records p ON pr.produce_id = p.id
+        WHERE pr.id = ?
+    """, (id,))
+    updated = dict(cursor.fetchone())
+    conn.close()
+
+    await ws_manager.broadcast({
+        "type": "PURCHASE_REQUEST_UPDATED",
+        "request": updated,
+        "farmer_id": user["id"],
+        "status": "accepted"
+    })
+
+    return {
+        "status": "success",
+        "message": "Purchase request accepted successfully",
+        "request": updated
+    }
+
+@router.post("/purchase-requests/{id}/reject")
+async def reject_purchase_request(id: int, user: Dict[str, Any] = Depends(require_farmer)):
+    """
+    Farmer rejects a purchase request for their verified produce.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM purchase_requests WHERE id = ?", (id,))
+    req_row = cursor.fetchone()
+    if not req_row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Purchase request not found")
+    if req_row["farmer_id"] != user["id"]:
+        conn.close()
+        raise HTTPException(status_code=403, detail="You do not have permission to manage this purchase request")
+
+    cursor.execute("""
+        UPDATE purchase_requests
+        SET status = 'rejected', updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+    """, (id,))
+    conn.commit()
+
+    cursor.execute("""
+        SELECT pr.*, p.crop_name
+        FROM purchase_requests pr
+        JOIN produce_records p ON pr.produce_id = p.id
+        WHERE pr.id = ?
+    """, (id,))
+    updated = dict(cursor.fetchone())
+    conn.close()
+
+    await ws_manager.broadcast({
+        "type": "PURCHASE_REQUEST_UPDATED",
+        "request": updated,
+        "farmer_id": user["id"],
+        "status": "rejected"
+    })
+
+    return {
+        "status": "success",
+        "message": "Purchase request rejected",
+        "request": updated
+    }
+
+@router.put("/purchase-requests/{id}/status")
+async def update_purchase_request_status(id: int, body: PurchaseRequestStatusUpdate, user: Dict[str, Any] = Depends(require_farmer)):
+    """
+    Update purchase request status to 'accepted' or 'rejected'.
+    """
+    new_status = body.status.strip().lower()
+    if new_status == "accepted":
+        return await accept_purchase_request(id, user)
+    elif new_status == "rejected":
+        return await reject_purchase_request(id, user)
+    else:
+        raise HTTPException(status_code=400, detail="Invalid status. Allowed values: accepted, rejected")

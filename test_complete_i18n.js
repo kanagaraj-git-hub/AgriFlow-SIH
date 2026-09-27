@@ -267,7 +267,7 @@ async function run() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            identifier: '9876543210',
+            identifier: 'AGRI-TN-0002',
             password: 'officer123',
             role: 'OFFICER'
           })

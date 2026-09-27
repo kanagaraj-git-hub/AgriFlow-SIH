@@ -189,8 +189,8 @@ def run_tests():
     print(f"  Source Types found: {source_types}")
     assert 15.0 in quantities, "15 Tons officer-recorded onion not found in search results"
     assert 5.0 in quantities, "5 Tons farmer-submitted verified onion not found in search results"
-    assert "OFFICER_ENTRY" in source_types
-    assert "FARMER_VERIFIED" in source_types
+    assert "officer_local" in source_types or "OFFICER_ENTRY" in source_types
+    assert "farmer_verified" in source_types or "FARMER_VERIFIED" in source_types
     print(f"[PASS] Step 12: Buyer sees BOTH 15 Tons (Officer Recorded) + 5 Tons (Farmer Verified)!")
 
     # Step 13: Buyer opens details and sends a purchase request

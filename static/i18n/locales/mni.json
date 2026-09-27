@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ চেক তৌরবা",
     "avail_qty": "ফংলিবা চাং",
     "btn_contact_seller": "থাগৎলু",
+    "localOfficerRecord": "লোকেল ওফিসারগী ফংবা",
+    "farmerVerifiedRecord": "চেক তৌরবা লৌউমীগী পোত্থোক",
+    "purchaseRequestsOnlyForFarmer": "মসি লৌউ-শিংউগী ওফিসারনা রিপোর্ত তৌরকপা লোকেলগী ফংবা পাউনি। লৈনবা রিকুয়েষ্ট অসি চেক তৌরবা লৌউমীনা লিশ্ত তৌরবা পোত্থোক্কীদমক খক্তা ফংগনি।",
+    "recordType": "রেকোর্দ মখল",
     "priceCol": "মমল"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "চেক তৌরবা",
-    "pending": "পেন্ডিং",
-    "rejected": "য়াদ্রে",
+    "pending": "লেপ্লিবা",
+    "rejected": "য়াদে",
     "available": "ফংই",
     "unavailable": "ফংদে",
     "Verified": "চেক তৌরবা",
-    "Pending": "পেন্ডিং",
-    "Rejected": "য়াদ্রে",
+    "Pending": "লেপ্লিবা",
+    "Rejected": "য়াদে",
     "Available": "ফংই",
-    "Unavailable": "ফংদে"
+    "Unavailable": "ফংদে",
+    "accepted": "য়ারে",
+    "Accepted": "য়ারে"
   },
   "statuses": {
     "verified": "চেক তৌরবা",
-    "pending": "পেন্ডিং",
-    "rejected": "য়াদ্রে",
+    "pending": "লেপ্লিবা",
+    "rejected": "য়াদে",
     "available": "ফংই",
     "unavailable": "ফংদে",
     "Verified": "চেক তৌরবা",
-    "Pending": "পেন্ডিং",
-    "Rejected": "য়াদ্রে",
+    "Pending": "লেপ্লিবা",
+    "Rejected": "য়াদে",
     "Available": "ফংই",
-    "Unavailable": "ফংদে"
+    "Unavailable": "ফংদে",
+    "accepted": "য়ারে",
+    "Accepted": "য়ারে"
   },
   "sources": {
     "officerVerified": "অফিসারনা চেক তৌবা",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ লৈনবা হংবা লৌউমী / অফিসারদা থাখ্রে!",
     "statusUpdated": "পোত্থোক ফিভম অপডেট তৌরে",
     "deleted": "পোত্থোক রেকর্ড মুত্থৎলে"
+  },
+  "purchaseRequests": {
+    "title": "লৈনবা রিকুয়েষ্টশিং",
+    "subtitle": "নহাক্কী চেক তৌরবা পোত্থোক্কীদমক লৈরিবশিংদগী ফংলকপা রিকুয়েষ্টশিং",
+    "buyer": "লৈরিব মী",
+    "requestedQuantity": "নিংশিংলিবা চাং",
+    "message": "পাউজেল / মথৌ তাবা",
+    "status": "ফিভম",
+    "actions": "থবকশিং",
+    "pending": "লেপ্লিবা",
+    "accept": "য়ানবা",
+    "reject": "য়াদবা",
+    "accepted": "য়ারে",
+    "rejected": "য়াদে",
+    "noRequests": "হৌজিকফাওবা লৈনবা রিকুয়েষ্ট অমত্তা লৈত্রি",
+    "noRequestsDesc": "লৈরিবশিংনা রিকুয়েষ্ট থারকপা মতমদা মফমসিদা উবা ফংগনি।",
+    "sentSuccess": "লৈনবা রিকুয়েষ্ট মাইপাক্না থাগৎখ্রে।",
+    "sentToFarmerDesc": "নহাক্কী রিকুয়েষ্ট অসি পোত্থোক অসি পুথোক্লিবা চেক তৌরবা লৌউমীদা থাখ্রে।",
+    "acceptedSuccess": "লৈনবা রিকুয়েষ্ট য়ারে।",
+    "rejectedSuccess": "লৈনবা রিকুয়েষ্ট য়াদে।",
+    "buyerContact": "লৈরিবগী পাউ ফাওনবা",
+    "crop": "মহৈ-মরোং",
+    "date": "তারিখ"
   }
 }

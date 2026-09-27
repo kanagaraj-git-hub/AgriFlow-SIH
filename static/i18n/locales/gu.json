@@ -322,6 +322,10 @@
     "badge_verified": "✓ પ્રમાણિત",
     "avail_qty": "ઉપલબ્ધ જથ્થો",
     "btn_contact_seller": "વિક્રેતાનો સંપર્ક કરો",
+    "localOfficerRecord": "સ્થાનિક અધિકારી ઉપલબ્ધતા",
+    "farmerVerifiedRecord": "ચકાસાયેલ ખેડૂત ઉપજ",
+    "purchaseRequestsOnlyForFarmer": "આ કૃષિ અધિકારી દ્વારા નોંધાયેલ સ્થાનિક ઉપલબ્ધતા માહિતી છે. ખરીદી વિનંતીઓ ફક્ત ચકાસાયેલ ખેડૂત-સૂચિબદ્ધ ઉપજ માટે ઉપલબ્ધ છે.",
+    "recordType": "રેકોર્ડ પ્રકાર",
     "priceCol": "કિંમત"
   },
   "officer": {
@@ -502,26 +506,30 @@
   "status": {
     "verified": "પ્રમાણિત",
     "pending": "બાકી",
-    "rejected": "અસ્વીકૃત",
+    "rejected": "અસ્વીકારાયેલ",
     "available": "ઉપલબ્ધ",
     "unavailable": "અનુપલબ્ધ",
     "Verified": "પ્રમાણિત",
     "Pending": "બાકી",
-    "Rejected": "અસ્વીકૃત",
+    "Rejected": "અસ્વીકારાયેલ",
     "Available": "ઉપલબ્ધ",
-    "Unavailable": "અનુપલબ્ધ"
+    "Unavailable": "અનુપલબ્ધ",
+    "accepted": "સ્વીકારાયેલ",
+    "Accepted": "સ્વીકારાયેલ"
   },
   "statuses": {
     "verified": "પ્રમાણિત",
     "pending": "બાકી",
-    "rejected": "અસ્વીકૃત",
+    "rejected": "અસ્વીકારાયેલ",
     "available": "ઉપલબ્ધ",
     "unavailable": "અનુપલબ્ધ",
     "Verified": "પ્રમાણિત",
     "Pending": "બાકી",
-    "Rejected": "અસ્વીકૃત",
+    "Rejected": "અસ્વીકારાયેલ",
     "Available": "ઉપલબ્ધ",
-    "Unavailable": "અનુપલબ્ધ"
+    "Unavailable": "અનુપલબ્ધ",
+    "accepted": "સ્વીકારાયેલ",
+    "Accepted": "સ્વીકારાયેલ"
   },
   "sources": {
     "officerVerified": "અધિકારી પ્રમાણિત",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ ખરીદી પૂછપરછ ઉત્પાદક / અધિકારીને મોકલવામાં આવી!",
     "statusUpdated": "પેદાશ સ્થિતિ અદ્યતન થઈ",
     "deleted": "પેદાશ રેકોર્ડ કાઢી નાખ્યો"
+  },
+  "purchaseRequests": {
+    "title": "ખરીદી વિનંતીઓ",
+    "subtitle": "તમારી ચકાસાયેલ ઉપજ માટે ખરીદદારો તરફથી મળેલી પૂછપરછ",
+    "buyer": "ખરીદદાર",
+    "requestedQuantity": "વિનંતી કરેલ જથ્થો",
+    "message": "સંદેશ / જરૂરિયાતો",
+    "status": "સ્થિતિ",
+    "actions": "પગલાં",
+    "pending": "બાકી",
+    "accept": "સ્વીકારો",
+    "reject": "અસ્વીકાર કરો",
+    "accepted": "સ્વીકારાયેલ",
+    "rejected": "અસ્વીકારાયેલ",
+    "noRequests": "હજુ સુધી કોઈ ખરીદી વિનંતી નથી",
+    "noRequestsDesc": "જ્યારે ખરીદદારો પૂછપરછ મોકલશે, ત્યારે તે અહીં દેખાશે.",
+    "sentSuccess": "ખરીદી વિનંતી સફળતાપૂર્વક મોકલાઈ ગઈ.",
+    "sentToFarmerDesc": "તમારી વિનંતી આ ચકાસાયેલ ઉપજ સાથે જોડાયેલા ખેડૂતને મોકલાઈ છે.",
+    "acceptedSuccess": "ખરીદી વિનંતી સ્વીકારવામાં આવી.",
+    "rejectedSuccess": "ખરીદી વિનંતી અસ્વીકાર કરવામાં આવી.",
+    "buyerContact": "ખરીદદાર સંપર્ક",
+    "crop": "પાક",
+    "date": "તારીખ"
   }
 }

@@ -166,13 +166,13 @@ async def add_produce(req: ProduceCreate, user: Dict[str, Any] = Depends(require
             raise HTTPException(status_code=400, detail="Price cannot be negative")
         price_val = round(float(req.price), 2)
 
-    # When an officer submits, status is directly 'VERIFIED' and source_type is 'OFFICER_ENTRY'
+    # When an officer submits, status is directly 'VERIFIED' and source_type is 'officer_local'
     cursor.execute("""
         INSERT INTO produce_records (
             crop_name, quantity, unit, price, area, village, district, state,
             produce_type, quality, availability_date, expected_harvest_date,
             source_type, officer_id, verification_status, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'OFFICER_ENTRY', ?, 'VERIFIED', ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'officer_local', ?, 'VERIFIED', ?)
     """, (
         req.crop_name.strip(),
         req.quantity,
@@ -338,7 +338,7 @@ async def verify_farmer_request(id: int, action_data: VerificationAction, user: 
         cursor.execute("""
             UPDATE produce_records
             SET verification_status = 'VERIFIED',
-                source_type = 'FARMER_VERIFIED',
+                source_type = 'farmer_verified',
                 officer_id = ?,
                 quantity = ?,
                 unit = ?,
@@ -360,7 +360,7 @@ async def verify_farmer_request(id: int, action_data: VerificationAction, user: 
                 crop_name, quantity, unit, area, village, district, state,
                 produce_type, quality, availability_date, expected_harvest_date,
                 source_type, farmer_id, officer_id, verification_status, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Field Crop', ?, ?, ?, 'FARMER_VERIFIED', ?, ?, 'VERIFIED', ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Field Crop', ?, ?, ?, 'farmer_verified', ?, ?, 'VERIFIED', ?)
         """, (
             req_row["crop_name"],
             req_row["expected_quantity"],

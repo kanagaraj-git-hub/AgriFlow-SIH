@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ प्रमाणित",
     "avail_qty": "मौजूद मात्रा",
     "btn_contact_seller": "भेजो",
+    "localOfficerRecord": "स्थानीय अधिकारी उपलब्धता",
+    "farmerVerifiedRecord": "प्रमाणित जमींदार उपज",
+    "purchaseRequestsOnlyForFarmer": "एह् कृषि अधिकारी आसेआ दस्सी गेई स्थानीय उपलब्धता जानकारी ऐ। खरीद दरखास्त सिर्फ प्रमाणित जमींदार उपज लेई उपलब्ध न।",
+    "recordType": "रिकार्ड किस्म",
     "priceCol": "मुल्ल"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "प्रमाणित",
-    "pending": "बाकी",
-    "rejected": "रद्द कीती",
+    "pending": "रुके दा",
+    "rejected": "रद्द",
     "available": "लभ्भदा",
     "unavailable": "नी लब्भदा",
     "Verified": "प्रमाणित",
-    "Pending": "बाकी",
-    "Rejected": "रद्द कीती",
+    "Pending": "रुके दा",
+    "Rejected": "रद्द",
     "Available": "लभ्भदा",
-    "Unavailable": "नी लब्भदा"
+    "Unavailable": "नी लब्भदा",
+    "accepted": "मंजूर",
+    "Accepted": "मंजूर"
   },
   "statuses": {
     "verified": "प्रमाणित",
-    "pending": "बाकी",
-    "rejected": "रद्द कीती",
+    "pending": "रुके दा",
+    "rejected": "रद्द",
     "available": "लभ्भदा",
     "unavailable": "नी लब्भदा",
     "Verified": "प्रमाणित",
-    "Pending": "बाकी",
-    "Rejected": "रद्द कीती",
+    "Pending": "रुके दा",
+    "Rejected": "रद्द",
     "Available": "लभ्भदा",
-    "Unavailable": "नी लब्भदा"
+    "Unavailable": "नी लब्भदा",
+    "accepted": "मंजूर",
+    "Accepted": "मंजूर"
   },
   "sources": {
     "officerVerified": "अफसर आसेआ जांची दी",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरीद पुच्छ ज़मींदार / अफसर गी भेज दित्ती!",
     "statusUpdated": "हालत अपडेट होई गेई",
     "deleted": "रिकार्ड मिटाई दित्ता"
+  },
+  "purchaseRequests": {
+    "title": "खरीद दरखासतां",
+    "subtitle": "तुहांदी प्रमाणित उपज लेई खरीददारें आसेआ आईयां पुछताछां",
+    "buyer": "खरीददार",
+    "requestedQuantity": "मंगिया गेदा माप",
+    "message": "सुनेह् / जरूरतां",
+    "status": "हालत",
+    "actions": "कम्म",
+    "pending": "रुके दा",
+    "accept": "मंजूर करो",
+    "reject": "रद्द करो",
+    "accepted": "मंजूर",
+    "rejected": "रद्द",
+    "noRequests": "हले कोई खरीद दरखास्त नेईं",
+    "noRequestsDesc": "जदू खरीददार पुछताछ भेजंगन तां ओह् एथै दिक्संगन।",
+    "sentSuccess": "खरीद दरखास्त कामयाबी कन्नै भेजी गेई।",
+    "sentToFarmerDesc": "तुहांदी दरखास्त इस उपज कन्नै जुड़े दे जमींदार गी भेजी गेई ऐ।",
+    "acceptedSuccess": "खरीद दरखास्त मंजूर करी लैती गेई।",
+    "rejectedSuccess": "खरीद दरखास्त रद्द करी दित्ती गेई।",
+    "buyerContact": "खरीददार राबता",
+    "crop": "फसल",
+    "date": "तरीक"
   }
 }

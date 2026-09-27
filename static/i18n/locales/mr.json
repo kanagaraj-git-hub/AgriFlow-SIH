@@ -322,6 +322,10 @@
     "badge_verified": "✓ प्रमाणित",
     "avail_qty": "उपलब्ध प्रमाण",
     "btn_contact_seller": "विक्रेत्याशी संपर्क साधा",
+    "localOfficerRecord": "स्थानिक अधिकारी उपलब्धता",
+    "farmerVerifiedRecord": "सत्यापित शेतकरी उत्पादन",
+    "purchaseRequestsOnlyForFarmer": "ही कृषी अधिकाऱ्यांनी नोंदवलेली स्थानिक उपलब्धतेची माहिती आहे. खरेदी विनंत्या केवळ सत्यापित शेतकरी-सूचीबद्ध उत्पादनांसाठी उपलब्ध आहेत.",
+    "recordType": "नोंद प्रकार",
     "priceCol": "किंमत"
   },
   "officer": {
@@ -509,7 +513,9 @@
     "Pending": "प्रलंबित",
     "Rejected": "नाकारले",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "statuses": {
     "verified": "प्रमाणित",
@@ -521,7 +527,9 @@
     "Pending": "प्रलंबित",
     "Rejected": "नाकारले",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "sources": {
     "officerVerified": "अधिकाऱ्याने प्रमाणित",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरेदी चौकशी उत्पादक / अधिकाऱ्याकडे पाठवली गेली!",
     "statusUpdated": "उत्पादन स्थिती अद्यतनित केली",
     "deleted": "उत्पादन नोंद हटवली गेली"
+  },
+  "purchaseRequests": {
+    "title": "खरेदी विनंत्या",
+    "subtitle": "तुमच्या सत्यापित शेतमालासाठी खरेदीदारांकडून आलेल्या चौकशी",
+    "buyer": "खरेदीदार",
+    "requestedQuantity": "मागणी केलेले प्रमाण",
+    "message": "संदेश / गरजा",
+    "status": "स्थिती",
+    "actions": "कृती",
+    "pending": "प्रलंबित",
+    "accept": "स्वीकारा",
+    "reject": "नाकारा",
+    "accepted": "स्वीकृत",
+    "rejected": "नाकारले",
+    "noRequests": "अद्याप खरेदी विनंत्या नाहीत",
+    "noRequestsDesc": "खरेदीदारांनी चौकशी पाठवल्यास त्या येथे दिसतील.",
+    "sentSuccess": "खरेदी विनंती यशस्वीरित्या पाठवली.",
+    "sentToFarmerDesc": "तुमची विनंती या उत्पादनाशी संबंधित शेतकऱ्याकडे पाठवली गेली आहे.",
+    "acceptedSuccess": "खरेदी विनंती स्वीकारली.",
+    "rejectedSuccess": "खरेदी विनंती नाकारली.",
+    "buyerContact": "खरेदीदार संपर्क",
+    "crop": "पीक",
+    "date": "तारीख"
   }
 }

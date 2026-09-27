@@ -146,8 +146,8 @@ EN = {
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -342,7 +342,11 @@ EN = {
     "rejected": "Rejected",
     "badge_verified": "✓ VERIFIED",
     "avail_qty": "Available Quantity",
-    "btn_contact_seller": "Contact Seller"
+    "btn_contact_seller": "Contact Seller",
+    "localOfficerRecord": "Local Officer Availability",
+    "farmerVerifiedRecord": "Verified Farmer Produce",
+    "purchaseRequestsOnlyForFarmer": "This is local availability information reported by an Agriculture Officer. Purchase requests are available only for verified farmer-listed produce.",
+    "recordType": "Record Type"
   },
   "officer": {
     "portal": "Agriculture Officer Portal",
@@ -559,6 +563,29 @@ EN = {
     "inquirySent": "✓ Purchase inquiry sent to producer / local officer!",
     "statusUpdated": "Produce status updated",
     "deleted": "Produce record deleted"
+  },
+  "purchaseRequests": {
+    "title": "Purchase Requests",
+    "subtitle": "Inquiries received from prospective buyers for your verified produce",
+    "buyer": "Buyer",
+    "requestedQuantity": "Requested Quantity",
+    "message": "Message / Requirements",
+    "status": "Status",
+    "actions": "Actions",
+    "pending": "Pending",
+    "accept": "Accept",
+    "reject": "Reject",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "noRequests": "No purchase requests yet",
+    "noRequestsDesc": "When buyers send purchase inquiries for your verified produce, they will appear here.",
+    "sentSuccess": "Purchase request sent successfully.",
+    "sentToFarmerDesc": "Your request has been sent to the farmer associated with this verified produce.",
+    "acceptedSuccess": "Purchase request accepted successfully.",
+    "rejectedSuccess": "Purchase request rejected.",
+    "buyerContact": "Buyer Contact",
+    "crop": "Crop",
+    "date": "Date"
   }
 }
 
@@ -568,6 +595,7 @@ from locales_group3 import LOCALES_GROUP_3
 from locales_group4 import LOCALES_GROUP_4
 from locales_group5 import LOCALES_GROUP_5
 from update_locales_data import PRODUCE_TRANSLATIONS
+from add_purchase_translations import PURCHASE_AND_SOURCE_TRANSLATIONS
 
 ALL_LOCALES = { "en": EN }
 ALL_LOCALES.update(LOCALES_GROUP_1)
@@ -1162,6 +1190,26 @@ for code, loc_data in ALL_LOCALES.items():
         status_dict[k.capitalize()] = v
     loc_data["status"] = status_dict
     loc_data["statuses"] = status_dict
+
+# Apply Purchase Requests and Source Type translations for all languages
+for code, custom_trans in PURCHASE_AND_SOURCE_TRANSLATIONS.items():
+    if code in ALL_LOCALES:
+        loc = ALL_LOCALES[code]
+        if "produce" in custom_trans:
+            if "produce" not in loc:
+                loc["produce"] = {}
+            loc["produce"].update(custom_trans["produce"])
+        if "purchaseRequests" in custom_trans:
+            if "purchaseRequests" not in loc:
+                loc["purchaseRequests"] = {}
+            loc["purchaseRequests"].update(custom_trans["purchaseRequests"])
+        if "purchaseRequests" in loc and "status" in loc:
+            loc["status"]["accepted"] = loc["purchaseRequests"]["accepted"]
+            loc["status"]["rejected"] = loc["purchaseRequests"]["rejected"]
+            loc["status"]["pending"] = loc["purchaseRequests"]["pending"]
+            loc["status"]["Accepted"] = loc["purchaseRequests"]["accepted"]
+            loc["status"]["Rejected"] = loc["purchaseRequests"]["rejected"]
+            loc["status"]["Pending"] = loc["purchaseRequests"]["pending"]
 
 expected_codes = [
     "en", "as", "bn", "brx", "doi", "gu", "hi", "kn", "ks", "kok",

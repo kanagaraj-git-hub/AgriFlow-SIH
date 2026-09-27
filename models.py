@@ -118,3 +118,6 @@ class PurchaseRequestCreate(BaseModel):
     requested_quantity: float
     quantity_unit: str = "Tons"
     message: Optional[str] = ""
+
+class PurchaseRequestStatusUpdate(BaseModel):
+    status: str # 'accepted' or 'rejected'

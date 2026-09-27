@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ प्रमाणित",
     "avail_qty": "उपलब्ध मात्रा",
     "btn_contact_seller": "पठाउ",
+    "localOfficerRecord": "स्थानीय पदाधिकारी उपलब्धता",
+    "farmerVerifiedRecord": "सत्यापित किसानक उपज",
+    "purchaseRequestsOnlyForFarmer": "ई कृषि पदाधिकारी द्वारा दर्ज कएल गेल स्थानीय उपलब्धता जानकारी अछि। खरीद अनुरोध केवल सत्यापित किसान-सूचीबद्ध उपजक लेल उपलब्ध अछि।",
+    "recordType": "रिकॉर्ड प्रकार",
     "priceCol": "मूल्य"
   },
   "officer": {
@@ -509,7 +513,9 @@
     "Pending": "लंबित",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "statuses": {
     "verified": "प्रमाणित",
@@ -521,7 +527,9 @@
     "Pending": "लंबित",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "sources": {
     "officerVerified": "पदाधिकारी प्रमाणित",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरीद पूछताछ किसान / पदाधिकारीकें पठाओल गेल!",
     "statusUpdated": "उत्पाद स्थिति अपडेट भेल",
     "deleted": "उत्पाद हटाओल गेल"
+  },
+  "purchaseRequests": {
+    "title": "खरीद अनुरोध",
+    "subtitle": "अहाँक सत्यापित उपजक लेल क्रेतासभसँ प्राप्त अनुरोध",
+    "buyer": "क्रेता",
+    "requestedQuantity": "अनुरोधित मात्रा",
+    "message": "संदेश / आवश्यकता",
+    "status": "स्थिति",
+    "actions": "कार्रवाई",
+    "pending": "लंबित",
+    "accept": "स्वीकार करू",
+    "reject": "अस्वीकार करू",
+    "accepted": "स्वीकृत",
+    "rejected": "अस्वीकृत",
+    "noRequests": "अखन कोनो खरीद अनुरोध नहि अछि",
+    "noRequestsDesc": "जखन क्रेता पूछताछ पठेताह तँ ओ एतय देखाए पड़त।",
+    "sentSuccess": "खरीद अनुरोध सफलतापूर्वक पठाओल गेल।",
+    "sentToFarmerDesc": "अहाँक अनुरोध एहि सत्यापित उपजसँ जुड़ल किसान लग पठाओल गेल अछि।",
+    "acceptedSuccess": "खरीद अनुरोध स्वीकार कएल गेल।",
+    "rejectedSuccess": "खरीद अनुरोध अस्वीकार कएल गेल।",
+    "buyerContact": "क्रेता संपर्क",
+    "crop": "फसल",
+    "date": "तिथि"
   }
 }

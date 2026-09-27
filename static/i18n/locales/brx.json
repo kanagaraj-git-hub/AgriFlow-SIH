@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ आनजाद जाबाय",
     "avail_qty": "मोननो हागौ बिबां",
     "btn_contact_seller": "थिनहर",
+    "localOfficerRecord": "गामियारि अफिसारनि मोननो हानाय",
+    "farmerVerifiedRecord": "आनजाद खांनाय आबादारीनि फसल",
+    "purchaseRequestsOnlyForFarmer": "बेयो आबाद अफिसारनि दैथायहरनाय गामियारि मोननो हानाय खौरां। बायनायनि खावलायनाया खालि आनजाद खांनाय आबादारीनि फसलनि थाखायल' मोननो हागौ।",
+    "recordType": "रेकर्ड रोखोम",
     "priceCol": "बेसेन"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "आनजाद जाबाय",
-    "pending": "नेनानै दं",
+    "pending": "नेनाय",
     "rejected": "नेवसिबाय",
     "available": "मोननो हागौ",
     "unavailable": "मोननो हाया",
     "Verified": "आनजाद जाबाय",
-    "Pending": "नेनानै दं",
+    "Pending": "नेनाय",
     "Rejected": "नेवसिबाय",
     "Available": "मोननो हागौ",
-    "Unavailable": "मोननो हाया"
+    "Unavailable": "मोननो हाया",
+    "accepted": "गनायबाय",
+    "Accepted": "गनायबाय"
   },
   "statuses": {
     "verified": "आनजाद जाबाय",
-    "pending": "नेनानै दं",
+    "pending": "नेनाय",
     "rejected": "नेवसिबाय",
     "available": "मोननो हागौ",
     "unavailable": "मोननो हाया",
     "Verified": "आनजाद जाबाय",
-    "Pending": "नेनानै दं",
+    "Pending": "नेनाय",
     "Rejected": "नेवसिबाय",
     "Available": "मोननो हागौ",
-    "Unavailable": "मोननो हाया"
+    "Unavailable": "मोननो हाया",
+    "accepted": "गनायबाय",
+    "Accepted": "गनायबाय"
   },
   "sources": {
     "officerVerified": "बिबानगिरि आनजाद",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ बायनो सोंनायखौ आबादारी / बिबानगिरिनो थिनहरबाय!",
     "statusUpdated": "थासारि गोदान खालामबाय",
     "deleted": "फसल दानख'बाय"
+  },
+  "purchaseRequests": {
+    "title": "बायनायनि खावलायनाय",
+    "subtitle": "नोंथांनि आनजाद खांनाय फसलनि थाखाय बायग्राफोरनिफ्राय मोननाय खावलायनाय",
+    "buyer": "बायग्रा",
+    "requestedQuantity": "खावलायनाय बिबां",
+    "message": "खौरां / गोनांथि",
+    "status": "थासारि",
+    "actions": "थांखि",
+    "pending": "नेनाय",
+    "accept": "गनाय",
+    "reject": "नेवसि",
+    "accepted": "गनायबाय",
+    "rejected": "नेवसिबाय",
+    "noRequests": "दासिम जेबो बायनायनि खावलायनाय गैया",
+    "noRequestsDesc": "बायग्राफोरा जेब्ला खावलायनाय हरगोन, बेयाव नुजागोन।",
+    "sentSuccess": "बायनायनि खावलायनाय जाफुंसारै हरबाय।",
+    "sentToFarmerDesc": "नोंथांनि खावलायनाया बे आनजाद खांनाय फसलजों सोमोन्दो गोनां आबादारीनिसिम थांदों।",
+    "acceptedSuccess": "बायनायनि खावलायनाय गनायबाय।",
+    "rejectedSuccess": "बायनायनि खावलायनाय नेवसिबाय।",
+    "buyerContact": "बायग्रानि सोमोन्दो",
+    "crop": "फसल",
+    "date": "अक्ट'"
   }
 }

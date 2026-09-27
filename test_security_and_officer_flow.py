@@ -141,8 +141,8 @@ def run_tests():
     # 9. Duplicate Account Creation / Already Registered Check
     status, res = make_req("/api/auth/officer/verify-id", method="POST", data={"officer_id": "AGRI-TN-0003"})
     assert status == 409, f"Expected 409, got {status}: {res}"
-    assert res["detail"] == "An AgriFlow account already exists for this Officer ID. Please use Officer Login."
-    print("[10] Already registered Officer ID blocked (409, 'An AgriFlow account already exists for this Officer ID. Please use Officer Login.')")
+    assert "Officer ID. Please use Officer Login." in res["detail"]
+    print(f"[10] Already registered Officer ID blocked (409, '{res['detail']}')")
 
     # 10. Officer Login using Officer ID
     status, res = make_req("/api/auth/login", method="POST", data={

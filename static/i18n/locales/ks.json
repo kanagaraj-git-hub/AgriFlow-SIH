@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ تصدیق شدہ",
     "avail_qty": "دَستیاب مقدار",
     "btn_contact_seller": "سوزِو",
+    "localOfficerRecord": "مقامی اَفسرٕچ دستیٲبی",
+    "farmerVerifiedRecord": "تصدیق شدہ کٔمیٖن سٕنٛز پٲداوار",
+    "purchaseRequestsOnlyForFarmer": "یہِ چھِ زراعتی افسر سٕنٛزِ طرفہٕ دِژمٔژ مقامی دستیٲبی ہٕنٛز اطلاع۔ خریٖداری ہٕنٛز درخواست چھِ صرف تصدیق شدہ کٔمیٖنو خٲطرٕ دستیاب۔",
+    "recordType": "ریکارڈٕچ قسٕم",
     "priceCol": "قئمَت"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "تصدیق شدہ",
-    "pending": "زیر التوا",
+    "pending": "پینڈِنٛگ",
     "rejected": "مسترد",
     "available": "دَستیاب",
     "unavailable": "ناقابلِ دَستیاب",
     "Verified": "تصدیق شدہ",
-    "Pending": "زیر التوا",
+    "Pending": "پینڈِنٛگ",
     "Rejected": "مسترد",
     "Available": "دَستیاب",
-    "Unavailable": "ناقابلِ دَستیاب"
+    "Unavailable": "ناقابلِ دَستیاب",
+    "accepted": "منظور",
+    "Accepted": "منظور"
   },
   "statuses": {
     "verified": "تصدیق شدہ",
-    "pending": "زیر التوا",
+    "pending": "پینڈِنٛگ",
     "rejected": "مسترد",
     "available": "دَستیاب",
     "unavailable": "ناقابلِ دَستیاب",
     "Verified": "تصدیق شدہ",
-    "Pending": "زیر التوا",
+    "Pending": "پینڈِنٛگ",
     "Rejected": "مسترد",
     "Available": "دَستیاب",
-    "Unavailable": "ناقابلِ دَستیاب"
+    "Unavailable": "ناقابلِ دَستیاب",
+    "accepted": "منظور",
+    "Accepted": "منظور"
   },
   "sources": {
     "officerVerified": "افسر تصدیق شدہ",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ خریدی پُچھ گَچھ آو سوزنہٕ!",
     "statusUpdated": "حٲلَتھ گٔیہِ اپ ڈیٹ",
     "deleted": "ریکارڈ آو مِٹاونہٕ"
+  },
+  "purchaseRequests": {
+    "title": "خریٖداری ہٕنٛز درخواستہٕ",
+    "subtitle": "تُہنٛزِ تصدیق شدہ پٲداوارٕ خٲطرٕ خریٖدارَو طرفہٕ موصول گٔژھن واجِنہِ طلب",
+    "buyer": "خریٖدار",
+    "requestedQuantity": "منٛگیمٕژ تعداد",
+    "message": "پیغام / ضرورت",
+    "status": "حالت",
+    "actions": "کارروٲیی",
+    "pending": "پینڈِنٛگ",
+    "accept": "قبول کٔرِو",
+    "reject": "مسترد کٔرِو",
+    "accepted": "منظور",
+    "rejected": "مسترد",
+    "noRequests": "کانٛہہ خریٖداری ہٕنٛز درخواست چھنہٕ وُنہِ",
+    "noRequestsDesc": "ییلہِ خریٖدار پُچھ گَچھ سوزَن، تِم یِلہِ ییٚتہِ ہاونہٕ۔",
+    "sentSuccess": "خریٖداری ہٕنٛز درخواست گیٚیہِ کامیابی سان سوزنہٕ۔",
+    "sentToFarmerDesc": "تُہنٛز درخواست گیٚیہِ اَتھ تصدیق شدہ پٲداوارٕ سۭتۍ وابستہٕ کٔمیٖنس سوزنہٕ۔",
+    "acceptedSuccess": "خریٖداری ہٕنٛز درخواست گیٚیہِ قبول کَرنہٕ۔",
+    "rejectedSuccess": "خریٖداری ہٕنٛز درخواست گیٚیہِ مسترد کَرنہٕ۔",
+    "buyerContact": "خریٖدار سُنٛد رابطہٕ",
+    "crop": "فصل",
+    "date": "تٲریٖخ"
   }
 }

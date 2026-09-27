@@ -664,6 +664,33 @@
           <button onclick="openModal('add-crop-modal')" class="px-4 py-2 rounded-lg bg-brand-700 text-white text-xs font-bold hover:bg-brand-800 transition" data-i18n="farmer.addFirstCrop">Add First Crop</button>
         </div>
       </div>
+
+      <!-- Farmer Purchase Requests Section (Requirement 7) -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <div class="flex items-center space-x-2.5">
+              <h2 class="text-lg font-bold text-slate-900" data-i18n="purchaseRequests.title">Purchase Requests</h2>
+              <span id="farmer-pr-pending-badge" class="hidden text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">0</span>
+            </div>
+            <p class="text-xs text-slate-500" data-i18n="purchaseRequests.subtitle">Inquiries received from prospective buyers for your verified produce</p>
+          </div>
+          <button onclick="loadFarmerPurchaseRequests()" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center space-x-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span data-i18n="common.refresh">Refresh</span>
+          </button>
+        </div>
+
+        <div id="farmer-purchase-requests-list" class="space-y-3">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div id="farmer-purchase-requests-empty" class="hidden text-center py-10 text-slate-400">
+          <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
+          <p class="text-sm font-semibold text-slate-700" data-i18n="purchaseRequests.noRequests">No purchase requests yet</p>
+          <p class="text-xs text-slate-500" data-i18n="purchaseRequests.noRequestsDesc">When buyers send purchase inquiries for your verified produce, they will appear here.</p>
+        </div>
+      </div>
     </section>
 
     <!-- 5. USER PROFILE VIEW (OFFICER OR FARMER) -->
@@ -830,31 +857,33 @@
               <p class="text-xs text-slate-500 mt-0.5" data-i18n="auth.officerVerificationSubtitle">Enter your Officer ID to verify your official credentials.</p>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.officerId">Officer ID</label>
-              <input type="text" id="officer-verify-id-input" placeholder="Enter your Officer ID (e.g. AGRI-TN-0003)" data-i18n-placeholder="auth.officerIdPlaceholder" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 font-mono focus:outline-none focus:ring-2 focus:ring-brand-500 uppercase">
-            </div>
-
-            <!-- Safe Prototype Demo Section (replaces public registry table) -->
-            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
-              <div class="flex items-center gap-1.5 font-bold text-slate-700 mb-1">
-                <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-brand-700"></i>
-                <span data-i18n="auth.prototypeDemo">Prototype Demo</span>
+            <form id="form-officer-verify" onsubmit="handleVerifyOfficerId(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.officerId">Officer ID</label>
+                <input type="text" id="officer-verify-id-input" placeholder="Enter your Officer ID (e.g. AGRI-TN-0003)" data-i18n-placeholder="auth.officerIdPlaceholder" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 font-mono focus:outline-none focus:ring-2 focus:ring-brand-500 uppercase">
               </div>
-              <p class="text-[11px] text-slate-500 mb-2" data-i18n="auth.demoOfficerIdHint">Use one of the provided demo Officer IDs for testing:</p>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" onclick="fillOfficerId('AGRI-TN-0001')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0001</button>
-                <button type="button" onclick="fillOfficerId('AGRI-TN-0002')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0002</button>
-                <button type="button" onclick="fillOfficerId('AGRI-TN-0003')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0003</button>
+
+              <!-- Safe Prototype Demo Section (replaces public registry table) -->
+              <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                <div class="flex items-center gap-1.5 font-bold text-slate-700 mb-1">
+                  <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-brand-700"></i>
+                  <span data-i18n="auth.prototypeDemo">Prototype Demo</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mb-2" data-i18n="auth.demoOfficerIdHint">Use one of the provided demo Officer IDs for testing:</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" onclick="fillOfficerId('AGRI-TN-0001')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0001</button>
+                  <button type="button" onclick="fillOfficerId('AGRI-TN-0002')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0002</button>
+                  <button type="button" onclick="fillOfficerId('AGRI-TN-0003')" class="px-2.5 py-1 rounded bg-white border border-slate-200 font-mono text-[11px] font-bold text-brand-700 hover:bg-brand-50 hover:border-brand-300 transition shadow-sm">AGRI-TN-0003</button>
+                </div>
               </div>
-            </div>
 
-            <!-- Error Box for Step 1 -->
-            <div id="officer-id-error" class="hidden p-3 rounded-lg border text-xs"></div>
+              <!-- Error Box for Step 1 -->
+              <div id="officer-id-error" class="hidden p-3 rounded-lg border text-xs"></div>
 
-            <button type="button" id="btn-verify-officer-id" onclick="handleVerifyOfficerId()" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center gap-2">
-              <span id="btn-verify-text" data-i18n="auth.verifyOfficerId">Verify Officer ID</span>
-            </button>
+              <button type="submit" id="btn-verify-officer-id" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center gap-2">
+                <span id="btn-verify-text" data-i18n="auth.verifyOfficerId">Verify Officer ID</span>
+              </button>
+            </form>
           </div>
 
           <!-- STEP 2: OTP Verification (Demo Mode) -->
@@ -889,22 +918,24 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.enterOtp">Enter OTP</label>
-              <input type="text" id="officer-otp-input" maxlength="6" placeholder="••••••" data-i18n-placeholder="auth.enterOtpPlaceholder" class="w-full px-3 py-2.5 text-center text-lg font-mono tracking-widest rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
-            </div>
+            <form id="form-officer-otp" onsubmit="handleVerifyOtp(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.enterOtp">Enter OTP</label>
+                <input type="text" id="officer-otp-input" maxlength="6" placeholder="••••••" data-i18n-placeholder="auth.enterOtpPlaceholder" class="w-full px-3 py-2.5 text-center text-lg font-mono tracking-widest rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
 
-            <!-- Error Box for Step 2 -->
-            <div id="officer-otp-error" class="hidden p-3 rounded-lg border text-xs"></div>
+              <!-- Error Box for Step 2 -->
+              <div id="officer-otp-error" class="hidden p-3 rounded-lg border text-xs"></div>
 
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" id="btn-verify-otp" onclick="handleVerifyOtp()" class="py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.verifyOtp">
-                Verify OTP
-              </button>
-              <button type="button" id="btn-resend-otp" onclick="handleResendOtp()" class="py-2.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition" data-i18n="auth.resendOtp">
-                Resend OTP
-              </button>
-            </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="submit" id="btn-verify-otp" class="py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.verifyOtp">
+                  Verify OTP
+                </button>
+                <button type="button" id="btn-resend-otp" onclick="handleResendOtp()" class="py-2.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition" data-i18n="auth.resendOtp">
+                  Resend OTP
+                </button>
+              </div>
+            </form>
             <button type="button" onclick="resetOfficerWizardToStep1()" class="w-full text-center text-xs text-slate-500 hover:text-slate-800 underline">
               ← Change Officer ID
             </button>
@@ -1257,9 +1288,13 @@
           <span class="text-slate-400 block text-[11px]" data-i18n="produce.availability">Availability Date:</span>
           <span id="pd-avail-date" class="font-bold text-slate-900">16 September 2026</span>
         </div>
-        <div class="col-span-2">
+        <div>
           <span class="text-slate-400 block text-[11px]" data-i18n="produce.verificationSource">Verification Source:</span>
           <span id="pd-source" class="font-bold text-brand-800">Officer Verified</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[11px]" data-i18n="produce.recordType">Record Type:</span>
+          <span id="pd-record-type" class="font-bold text-slate-800">Local Officer Availability</span>
         </div>
       </div>
 
@@ -1271,8 +1306,19 @@
         </p>
       </div>
 
-      <!-- Controlled Contact / Buyer Purchase Request Form -->
-      <div class="border-t border-slate-100 pt-4 space-y-3">
+      <!-- Informational notice for Officer Local Produce (Requirement 3, 8) -->
+      <div id="pd-officer-notice" class="hidden bg-amber-50 border border-amber-200/80 rounded-xl p-4 text-xs text-amber-900 flex items-start space-x-3">
+        <i data-lucide="info" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+        <div class="space-y-1">
+          <span class="font-bold block" data-i18n="produce.localOfficerRecord">Local Officer Availability</span>
+          <p class="leading-relaxed text-amber-800" data-i18n="produce.purchaseRequestsOnlyForFarmer">
+            This is local availability information reported by an Agriculture Officer. Purchase requests are available only for verified farmer-listed produce.
+          </p>
+        </div>
+      </div>
+
+      <!-- Controlled Contact / Buyer Purchase Request Form (Requirement 4, 6) -->
+      <div id="pd-purchase-section" class="border-t border-slate-100 pt-4 space-y-3">
         <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
           <i data-lucide="send" class="w-4 h-4 text-brand-700"></i>
           <span data-i18n="produce.purchaseTitle">Send Purchase Inquiry / Procurement Request</span>

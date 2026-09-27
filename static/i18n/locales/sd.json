@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ تصديق ٿيل",
     "avail_qty": "دستياب مقدار",
     "btn_contact_seller": "موڪليو",
+    "localOfficerRecord": "مقامي آفيسر جي دستيابي",
+    "farmerVerifiedRecord": "تصديق ٿيل هاري جي پيداوار",
+    "purchaseRequestsOnlyForFarmer": "هي زرعي آفيسر پاران ڏنل مقامي دستيابي جي معلومات آهي. خريداري جون درخواستون رڳو تصديق ٿيل هارين جي پيداوار لاءِ دستياب آهن.",
+    "recordType": "ريڪارڊ جو قسم",
     "priceCol": "قيمت"
   },
   "officer": {
@@ -509,7 +513,9 @@
     "Pending": "باقي",
     "Rejected": "رد ٿيل",
     "Available": "دستياب",
-    "Unavailable": "غير دستياب"
+    "Unavailable": "غير دستياب",
+    "accepted": "قبول ٿيل",
+    "Accepted": "قبول ٿيل"
   },
   "statuses": {
     "verified": "تصديق ٿيل",
@@ -521,7 +527,9 @@
     "Pending": "باقي",
     "Rejected": "رد ٿيل",
     "Available": "دستياب",
-    "Unavailable": "غير دستياب"
+    "Unavailable": "غير دستياب",
+    "accepted": "قبول ٿيل",
+    "Accepted": "قبول ٿيل"
   },
   "sources": {
     "officerVerified": "آفيسر تصديق ٿيل",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ خريداري پڇا ڳاڇا هاري / آفيسر ڏانهن موڪلي وئي!",
     "statusUpdated": "پيداوار جي حيثيت اپڊيٽ ٿي",
     "deleted": "پيداوار رڪارڊ ختم ٿي ويو"
+  },
+  "purchaseRequests": {
+    "title": "خريداري جون درخواستون",
+    "subtitle": "توهان جي تصديق ٿيل پيداوار لاءِ خريدارن کان مليل پڇا ڳاڇا",
+    "buyer": "خريدار",
+    "requestedQuantity": "گهربل مقدار",
+    "message": "پيغام / گهرجون",
+    "status": "حيثيت",
+    "actions": "عمل",
+    "pending": "باقي",
+    "accept": "قبول ڪريو",
+    "reject": "رد ڪريو",
+    "accepted": "قبول ٿيل",
+    "rejected": "رد ٿيل",
+    "noRequests": "اڃا تائين ڪا خريداري درخواست ناهي",
+    "noRequestsDesc": "جڏهن خريدار پڇا ڳاڇا موڪليندا، اهي هتي ظاهر ٿينديون.",
+    "sentSuccess": "خريداري درخواست ڪاميابي سان موڪلي وئي.",
+    "sentToFarmerDesc": "توهان جي درخواست هن پيداوار سان لاڳاپيل هاري ڏانهن موڪلي وئي آهي.",
+    "acceptedSuccess": "خريداري درخواست قبول ڪئي وئي.",
+    "rejectedSuccess": "خريداري درخواست رد ڪئي وئي.",
+    "buyerContact": "خريدار جو رابطو",
+    "crop": "فصل",
+    "date": "تاريخ"
   }
 }

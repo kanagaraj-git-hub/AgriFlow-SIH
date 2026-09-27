@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ प्रमाणित",
     "avail_qty": "उपलब्ध मात्रा",
     "btn_contact_seller": "पठाउनुहोस्",
+    "localOfficerRecord": "स्थानीय अधिकारी उपलब्धता",
+    "farmerVerifiedRecord": "प्रमाणित किसान उत्पादन",
+    "purchaseRequestsOnlyForFarmer": "यो कृषि अधिकारीद्वारा दर्ता गरिएको स्थानीय उपलब्धता जानकारी हो। खरिद अनुरोधहरू प्रमाणित किसान-सूचीबद्ध उपजका लागि मात्र उपलब्ध छन्।",
+    "recordType": "रेकर्ड प्रकार",
     "priceCol": "मूल्य"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "प्रमाणित",
-    "pending": "प्रतीक्षारत",
+    "pending": "विचाराधीन",
     "rejected": "अस्वीकृत",
     "available": "उपलब्ध",
     "unavailable": "अनुपलब्ध",
     "Verified": "प्रमाणित",
-    "Pending": "प्रतीक्षारत",
+    "Pending": "विचाराधीन",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "statuses": {
     "verified": "प्रमाणित",
-    "pending": "प्रतीक्षारत",
+    "pending": "विचाराधीन",
     "rejected": "अस्वीकृत",
     "available": "उपलब्ध",
     "unavailable": "अनुपलब्ध",
     "Verified": "प्रमाणित",
-    "Pending": "प्रतीक्षारत",
+    "Pending": "विचाराधीन",
     "Rejected": "अस्वीकृत",
     "Available": "उपलब्ध",
-    "Unavailable": "अनुपलब्ध"
+    "Unavailable": "अनुपलब्ध",
+    "accepted": "स्वीकृत",
+    "Accepted": "स्वीकृत"
   },
   "sources": {
     "officerVerified": "अधिकारी प्रमाणित",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ खरिद सोधपुछ उत्पादक वा अधिकारीलाई पठाइयो!",
     "statusUpdated": "उत्पादन स्थिति अद्यावधिक भयो",
     "deleted": "उत्पादन रेकर्ड मेटाइयो"
+  },
+  "purchaseRequests": {
+    "title": "खरिद अनुरोधहरू",
+    "subtitle": "तपाईंको प्रमाणित उत्पादनको लागि खरिदकर्ताहरूबाट प्राप्त अनुरोधहरू",
+    "buyer": "खरिदकर्ता",
+    "requestedQuantity": "अनुरोध गरिएको परिमाण",
+    "message": "सन्देश / आवश्यकताहरू",
+    "status": "स्थिति",
+    "actions": "कार्यहरू",
+    "pending": "विचाराधीन",
+    "accept": "स्वीकार गर्नुहोस्",
+    "reject": "अस्वीकार गर्नुहोस्",
+    "accepted": "स्वीकृत",
+    "rejected": "अस्वीकृत",
+    "noRequests": "अहिलेसम्म कुनै खरिद अनुरोध छैन",
+    "noRequestsDesc": "जब खरिदकर्ताहरूले सोधपुछ पठाउनेछन्, ती यहाँ देखिनेछन्।",
+    "sentSuccess": "खरिद अनुरोध सफलतापूर्वक पठाइयो।",
+    "sentToFarmerDesc": "तपाईंको अनुरोध यस प्रमाणित उत्पादनसँग सम्बन्धित किसानलाई पठाइएको छ।",
+    "acceptedSuccess": "खरिद अनुरोध स्वीकार गरियो।",
+    "rejectedSuccess": "खरिद अनुरोध अस्वीकार गरियो।",
+    "buyerContact": "खरिदकर्ता सम्पर्क",
+    "crop": "बाली",
+    "date": "मिति"
   }
 }

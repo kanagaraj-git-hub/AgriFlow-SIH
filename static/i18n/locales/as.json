@@ -322,6 +322,10 @@
     "badge_verified": "✓ পৰীক্ষিত",
     "avail_qty": "উপলব্ধ পৰিমাণ",
     "btn_contact_seller": "প্ৰেৰণ কৰক",
+    "localOfficerRecord": "স্থানীয় বিষয়াৰ উপলব্ধতা",
+    "farmerVerifiedRecord": "পৰীক্ষিত কৃষকৰ উৎপাদিত সামগ্ৰী",
+    "purchaseRequestsOnlyForFarmer": "এইটো কৃষি বিষয়াৰ দ্বাৰা প্ৰতিবেদিত স্থানীয় উপলব্ধতাৰ তথ্য। ক্ৰয় অনুৰোধ কেৱল পৰীক্ষিত কৃষক তালিকাভুক্ত সামগ্ৰীৰ বাবেহে উপলব্ধ।",
+    "recordType": "ৰেকৰ্ডৰ প্ৰকাৰ",
     "priceCol": "মূল্য"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "পৰীক্ষিত",
-    "pending": "বাকী থকা",
-    "rejected": "প্রত্যাখ্যাত",
+    "pending": "মুলতুৱী",
+    "rejected": "প্ৰত্যাখ্যাত",
     "available": "উপলব্ধ",
     "unavailable": "অনুপলব্ধ",
     "Verified": "পৰীক্ষিত",
-    "Pending": "বাকী থকা",
-    "Rejected": "প্রত্যাখ্যাত",
+    "Pending": "মুলতুৱী",
+    "Rejected": "প্ৰত্যাখ্যাত",
     "Available": "উপলব্ধ",
-    "Unavailable": "অনুপলব্ধ"
+    "Unavailable": "অনুপলব্ধ",
+    "accepted": "গৃহীত",
+    "Accepted": "গৃহীত"
   },
   "statuses": {
     "verified": "পৰীক্ষিত",
-    "pending": "বাকী থকা",
-    "rejected": "প্রত্যাখ্যাত",
+    "pending": "মুলতুৱী",
+    "rejected": "প্ৰত্যাখ্যাত",
     "available": "উপলব্ধ",
     "unavailable": "অনুপলব্ধ",
     "Verified": "পৰীক্ষিত",
-    "Pending": "বাকী থকা",
-    "Rejected": "প্রত্যাখ্যাত",
+    "Pending": "মুলতুৱী",
+    "Rejected": "প্ৰত্যাখ্যাত",
     "Available": "উপলব্ধ",
-    "Unavailable": "অনুপলব্ধ"
+    "Unavailable": "অনুপলব্ধ",
+    "accepted": "গৃহীত",
+    "Accepted": "গৃহীত"
   },
   "sources": {
     "officerVerified": "বিষয়া পৰীক্ষিত",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ ক্ৰয় অনুসন্ধান উৎপাদক / বিষয়ালৈ প্ৰেৰণ কৰা হ'ল!",
     "statusUpdated": "সামগ্ৰীৰ স্থিতি আপডেট হ'ল",
     "deleted": "সামগ্ৰীৰ তথ্য মচি পেলোৱা হ'ল"
+  },
+  "purchaseRequests": {
+    "title": "ক্ৰয় অনুৰোধ",
+    "subtitle": "আপোনাৰ পৰীক্ষিত সামগ্ৰীৰ বাবে ক্ৰেতাসকলৰ পৰা প্ৰাপ্ত অনুৰোধ",
+    "buyer": "ক্ৰেতা",
+    "requestedQuantity": "অনুৰোধ কৰা পৰিমাণ",
+    "message": "বাৰ্তা / প্ৰয়োজনীয়তা",
+    "status": "স্থিতি",
+    "actions": "পদক্ষেপ",
+    "pending": "মুলতুৱী",
+    "accept": "গ্ৰহণ কৰক",
+    "reject": "প্ৰত্যাখ্যান কৰক",
+    "accepted": "গৃহীত",
+    "rejected": "প্ৰত্যাখ্যাত",
+    "noRequests": "এতিয়ালৈকে কোনো ক্ৰয় অনুৰোধ নাই",
+    "noRequestsDesc": "ক্ৰেতাসকলে অনুসন্ধান পঠিয়ালে ইয়াত দেখা যাব।",
+    "sentSuccess": "ক্ৰয় অনুৰোধ সফলতাৰে প্ৰেৰণ কৰা হ'ল।",
+    "sentToFarmerDesc": "এই পৰীক্ষিত সামগ্ৰীৰ সৈতে জড়িত কৃষকজনলৈ আপোনাৰ অনুৰোধ প্ৰেৰণ কৰা হৈছে।",
+    "acceptedSuccess": "ক্ৰয় অনুৰোধ গৃহীত কৰা হ'ল।",
+    "rejectedSuccess": "ক্ৰয় অনুৰোধ প্ৰত্যাখ্যান কৰা হ'ল।",
+    "buyerContact": "ক্ৰেতাৰ যোগাযোগ",
+    "crop": "শস্য",
+    "date": "তাৰিখ"
   }
 }

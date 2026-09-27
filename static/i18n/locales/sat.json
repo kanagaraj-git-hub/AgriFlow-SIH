@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ",
     "avail_qty": "ᱧᱟᱢᱚᱜ ᱦᱟᱹᱴᱤᱧ",
     "btn_contact_seller": "ᱠᱩᱞ",
+    "localOfficerRecord": "ᱴᱷᱟᱶᱟᱱ ᱟᱹᱢᱟᱹᱞᱤᱭᱟᱹ ᱧᱟᱢᱚᱜ",
+    "farmerVerifiedRecord": "ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ ᱪᱟᱹᱥᱤ ᱟᱨᱡᱟᱣ",
+    "purchaseRequestsOnlyForFarmer": "ᱱᱚᱣᱟ ᱫᱚ ᱪᱟᱥ ᱟᱹᱢᱟᱹᱞᱤᱭᱟᱹ ᱦᱚᱛᱮᱛᱮ ᱮᱢ ᱟᱠᱟᱱ ᱴᱷᱟᱶᱟᱱ ᱧᱟᱢᱚᱜ ᱵᱟᱵᱚᱛ ᱠᱟᱛᱷᱟ ᱠᱟᱱᱟ᱾ ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱫᱚ ᱠᱷᱟᱹᱞᱤ ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ ᱪᱟᱹᱥᱤ ᱛᱟᱹᱞᱠᱟᱹ ᱟᱠᱟᱱ ᱟᱨᱡᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱜᱮ ᱧᱟᱢᱚᱜᱼᱟ᱾",
+    "recordType": "ᱨᱮᱠᱚᱨᱰ ᱞᱮᱠᱟᱱ",
     "priceCol": "ᱫᱟᱢ"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ",
-    "pending": "ᱛᱟᱺᱜᱤ ᱨᱮ",
-    "rejected": "ᱵᱟᱹᱛᱤᱞ",
+    "pending": "ᱵᱟᱹᱠᱤ",
+    "rejected": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ",
     "available": "ᱧᱟᱢᱚᱜᱼᱟ",
     "unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ",
     "Verified": "ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ",
-    "Pending": "ᱛᱟᱺᱜᱤ ᱨᱮ",
-    "Rejected": "ᱵᱟᱹᱛᱤᱞ",
+    "Pending": "ᱵᱟᱹᱠᱤ",
+    "Rejected": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ",
     "Available": "ᱧᱟᱢᱚᱜᱼᱟ",
-    "Unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ"
+    "Unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ",
+    "accepted": "ᱟᱸᱜᱚᱪ ᱮᱱᱟ",
+    "Accepted": "ᱟᱸᱜᱚᱪ ᱮᱱᱟ"
   },
   "statuses": {
     "verified": "ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ",
-    "pending": "ᱛᱟᱺᱜᱤ ᱨᱮ",
-    "rejected": "ᱵᱟᱹᱛᱤᱞ",
+    "pending": "ᱵᱟᱹᱠᱤ",
+    "rejected": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ",
     "available": "ᱧᱟᱢᱚᱜᱼᱟ",
     "unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ",
     "Verified": "ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ",
-    "Pending": "ᱛᱟᱺᱜᱤ ᱨᱮ",
-    "Rejected": "ᱵᱟᱹᱛᱤᱞ",
+    "Pending": "ᱵᱟᱹᱠᱤ",
+    "Rejected": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ",
     "Available": "ᱧᱟᱢᱚᱜᱼᱟ",
-    "Unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ"
+    "Unavailable": "ᱵᱟᱝ ᱧᱟᱢᱚᱜᱼᱟ",
+    "accepted": "ᱟᱸᱜᱚᱪ ᱮᱱᱟ",
+    "Accepted": "ᱟᱸᱜᱚᱪ ᱮᱱᱟ"
   },
   "sources": {
     "officerVerified": "ᱚᱯᱷᱤᱥᱟᱨ ᱯᱚᱨᱠᱷᱟᱣ",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ ᱠᱤᱨᱤᱧ ᱠᱩᱠᱞᱤ ᱪᱟᱹᱥᱤ / ᱚᱯᱷᱤᱥᱟᱨ ᱴᱷᱮᱱ ᱠᱩᱞ ᱮᱱᱟ!",
     "statusUpdated": "ᱟᱨᱡᱟᱣ ᱦᱟᱞᱚᱛ ᱱᱟᱣᱟ ᱮᱱᱟ",
     "deleted": "ᱟᱨᱡᱟᱣ ᱨᱮᱠᱚᱨᱰ ᱢᱮᱴᱟᱣ ᱮᱱᱟ"
+  },
+  "purchaseRequests": {
+    "title": "ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱠᱚ",
+    "subtitle": "ᱟᱢᱟᱜ ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ ᱟᱨᱡᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱠᱤᱨᱤᱧᱤᱭᱟᱹ ᱠᱚ ᱴᱷᱮᱱ ᱠᱷᱚᱱ ᱧᱟᱢ ᱟᱠᱟᱱ ᱠᱩᱠᱞᱤ",
+    "buyer": "ᱠᱤᱨᱤᱧᱤᱭᱟᱹ",
+    "requestedQuantity": "ᱠᱷᱚᱡᱽ ᱟᱠᱟᱱ ᱞᱮᱠᱷᱟ",
+    "message": "ᱠᱷᱚᱵᱚᱨ / ᱞᱟᱹᱠᱛᱤ",
+    "status": "ᱦᱟᱞᱚᱛ",
+    "actions": "ᱠᱟᱹᱢᱤᱦᱚᱨᱟ",
+    "pending": "ᱵᱟᱹᱠᱤ",
+    "accept": "ᱟᱸᱜᱚᱪ",
+    "reject": "ᱵᱟᱹᱜᱤ",
+    "accepted": "ᱟᱸᱜᱚᱪ ᱮᱱᱟ",
+    "rejected": "ᱵᱟᱹᱜᱤ ᱮᱱᱟ",
+    "noRequests": "ᱱᱤᱛ ᱫᱷᱟᱹᱵᱤᱡ ᱪᱮᱫ ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱵᱟᱹᱱᱩᱜᱼᱟ",
+    "noRequestsDesc": "ᱡᱚᱠᱷᱚᱱ ᱠᱤᱨᱤᱧᱤᱭᱟᱹ ᱠᱚ ᱠᱩᱠᱞᱤ ᱠᱚ ᱠᱩᱞᱟ, ᱩᱱ ᱡᱚᱠᱷᱟᱜ ᱱᱚᱸᱰᱮ ᱧᱮᱞᱚᱜᱼᱟ᱾",
+    "sentSuccess": "ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱥᱟᱹᱛ ᱥᱟᱶᱛᱮ ᱠᱩᱞ ᱮᱱᱟ᱾",
+    "sentToFarmerDesc": "ᱟᱢᱟᱜ ᱱᱮᱦᱚᱸᱨ ᱱᱚᱣᱟ ᱯᱚᱨᱠᱷᱟᱣ ᱟᱠᱟᱱ ᱟᱨᱡᱟᱣ ᱥᱟᱶ ᱡᱚᱲᱟᱣ ᱪᱟᱹᱥᱤ ᱴᱷᱮᱱ ᱠᱩᱞ ᱟᱠᱟᱱᱟ᱾",
+    "acceptedSuccess": "ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱟᱸᱜᱚᱪ ᱮᱱᱟ᱾",
+    "rejectedSuccess": "ᱠᱤᱨᱤᱧ ᱱᱮᱦᱚᱸᱨ ᱵᱟᱹᱜᱤ ᱮᱱᱟ᱾",
+    "buyerContact": "ᱠᱤᱨᱤᱧᱤᱭᱟᱹ ᱡᱚᱜᱟᱡᱚᱜᱽ",
+    "crop": "ᱪᱟᱥ",
+    "date": "ᱢᱟᱹᱦᱤᱛ"
   }
 }

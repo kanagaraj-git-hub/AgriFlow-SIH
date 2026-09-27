@@ -116,7 +116,7 @@ def seed_database(clean: bool = True):
         "Grade A",
         "2026-09-16",
         "2026-09-16",
-        "OFFICER_ENTRY",
+        "officer_local",
         officer_id,
         "VERIFIED",
         "Officer field verified: High-quality Bellary red onions harvested from local cluster."
@@ -141,7 +141,7 @@ def seed_database(clean: bool = True):
         "Grade A",
         "2026-09-18",
         "2026-09-18",
-        "OFFICER_ENTRY",
+        "officer_local",
         officer_id,
         "VERIFIED",
         "Ripe firm tomatoes, ready for market procurement."
@@ -166,7 +166,7 @@ def seed_database(clean: bool = True):
         "Grade B",
         "2026-09-20",
         "2026-09-20",
-        "OFFICER_ENTRY",
+        "officer_local",
         officer_id,
         "VERIFIED",
         "Local fresh potato stock available for direct bulk dispatch."
@@ -192,7 +192,7 @@ def seed_database(clean: bool = True):
         "Grade A",
         "2026-09-25",
         "2026-09-25",
-        "FARMER_VERIFIED",
+        "farmer_verified",
         farmer_id,
         "PENDING",
         "Cultivated under drip irrigation across 2 acres. Expected yield 5 tons."

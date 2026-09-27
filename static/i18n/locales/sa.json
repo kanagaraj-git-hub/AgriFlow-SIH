@@ -125,8 +125,8 @@
     "officerIdPlaceholder": "Enter your Officer ID (e.g. AGRI-TN-0003)",
     "verifyOfficerId": "Verify Officer ID",
     "verifying": "Verifying...",
-    "invalidOfficerId": "Officer ID Not Found",
-    "invalidOfficerIdMsg": "Officer ID not found. Please enter a valid Agriculture Officer ID.",
+    "invalidOfficerId": "Invalid Officer ID",
+    "invalidOfficerIdMsg": "Please enter a valid registered Agriculture Officer ID.",
     "officerAccountExists": "Officer account already exists",
     "officerAccountExistsMsg": "An AgriFlow account has already been created for this Officer ID. Please use Officer Login.",
     "accountAlreadyExists": "Officer account already exists",
@@ -322,6 +322,10 @@
     "badge_verified": "✓ प्रमाणितम्",
     "avail_qty": "उपलब्धपरिमाणम्",
     "btn_contact_seller": "प्रेषयतु",
+    "localOfficerRecord": "स्थानिकाधिकारिणः उपलब्धता",
+    "farmerVerifiedRecord": "प्रमाणितकृषकस्योत्पादः",
+    "purchaseRequestsOnlyForFarmer": "इयं कृष्याधिकारिणा सूचिता स्थानिकोपलब्धता-वार्ता। क्रयणप्रार्थनाः केवलं प्रमाणितकृषकसूचीबद्धोत्पादानां कृते उपलभ्यन्ते।",
+    "recordType": "अभिलेखाकारः",
     "priceCol": "मूल्यम्"
   },
   "officer": {
@@ -501,27 +505,31 @@
   },
   "status": {
     "verified": "प्रमाणितम्",
-    "pending": "प्रतीक्षारतम्",
-    "rejected": "प्रत्याख्यातम्",
+    "pending": "लम्बमानम्",
+    "rejected": "तिरस्कृतम्",
     "available": "उपलब्धम्",
     "unavailable": "अनुपलब्धम्",
     "Verified": "प्रमाणितम्",
-    "Pending": "प्रतीक्षारतम्",
-    "Rejected": "प्रत्याख्यातम्",
+    "Pending": "लम्बमानम्",
+    "Rejected": "तिरस्कृतम्",
     "Available": "उपलब्धम्",
-    "Unavailable": "अनुपलब्धम्"
+    "Unavailable": "अनुपलब्धम्",
+    "accepted": "स्वीकृतम्",
+    "Accepted": "स्वीकृतम्"
   },
   "statuses": {
     "verified": "प्रमाणितम्",
-    "pending": "प्रतीक्षारतम्",
-    "rejected": "प्रत्याख्यातम्",
+    "pending": "लम्बमानम्",
+    "rejected": "तिरस्कृतम्",
     "available": "उपलब्धम्",
     "unavailable": "अनुपलब्धम्",
     "Verified": "प्रमाणितम्",
-    "Pending": "प्रतीक्षारतम्",
-    "Rejected": "प्रत्याख्यातम्",
+    "Pending": "लम्बमानम्",
+    "Rejected": "तिरस्कृतम्",
     "Available": "उपलब्धम्",
-    "Unavailable": "अनुपलब्धम्"
+    "Unavailable": "अनुपलब्धम्",
+    "accepted": "स्वीकृतम्",
+    "Accepted": "स्वीकृतम्"
   },
   "sources": {
     "officerVerified": "अधिकारिप्रमाणितम्",
@@ -539,5 +547,28 @@
     "inquirySent": "✓ क्रयणप्रार्थना उत्पादकाय/अधिकारिणे प्रेषिता!",
     "statusUpdated": "उत्पादस्थितिः नवीकृता",
     "deleted": "उत्पादविवरणम् अपसारितम्"
+  },
+  "purchaseRequests": {
+    "title": "क्रयणप्रार्थनाः",
+    "subtitle": "भवतः प्रमाणितोत्पादानां कृते क्रेतृभ्यः प्राप्ताः अभ्यर्थनाः",
+    "buyer": "क्रेता",
+    "requestedQuantity": "प्रार्थिता मात्रा",
+    "message": "सन्देशः / आवश्यकताः",
+    "status": "स्थितिः",
+    "actions": "क्रियाः",
+    "pending": "लम्बमानम्",
+    "accept": "स्वीकरोतु",
+    "reject": "तिरस्करोतु",
+    "accepted": "स्वीकृतम्",
+    "rejected": "तिरस्कृतम्",
+    "noRequests": "अद्यापि क्रयणप्रार्थना न सन्ति",
+    "noRequestsDesc": "यदा क्रेतारः अभ्यर्थनाः प्रेषयिष्यन्ति तदा अत्र दृश्यन्ते।",
+    "sentSuccess": "क्रयणप्रार्थना साफल्येन प्रेषिता।",
+    "sentToFarmerDesc": "भवतः प्रार्थना अस्य प्रमाणितोत्पादस्य कृषकाय प्रेषिता वर्तते।",
+    "acceptedSuccess": "क्रयणप्रार्थना स्वीकृता।",
+    "rejectedSuccess": "क्रयणप्रार्थना तिरस्कृता।",
+    "buyerContact": "क्रेतृसम्पर्कः",
+    "crop": "सस्यम्",
+    "date": "दिनाङ्कः"
   }
 }
