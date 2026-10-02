@@ -930,7 +930,7 @@
         const dash = await dashRes.json();
         document.getElementById('officer-dash-name').innerText = STATE.user?.name || 'Agriculture Officer';
         const assignedJurisdictionLabel = t('officer.assignedJurisdiction', {}, undefined, 'Assigned Jurisdiction');
-        document.getElementById('officer-dash-details').innerText = `${STATE.profile?.designation || 'Agricultural Officer'} | ${assignedJurisdictionLabel}: ${dash.jurisdiction.area}, ${dash.jurisdiction.district}, ${dash.jurisdiction.state}`;
+        document.getElementById('officer-dash-details').innerText = `${STATE.profile?.designation || 'Agriculture Officer'} | ${assignedJurisdictionLabel}: ${dash.jurisdiction.area}, ${dash.jurisdiction.district}, ${dash.jurisdiction.state}`;
 
         document.getElementById('stat-officer-records').innerText = dash.stats.total_records;
         document.getElementById('stat-officer-quantity').innerText = dash.stats.total_quantity;
@@ -1210,7 +1210,7 @@
         },
         body: JSON.stringify({
           action: 'VERIFY',
-          comment: 'Field inspected and verified by AAO Ravi Kumar.'
+          comment: 'Field inspected and verified by Agriculture Officer Ravi Kumar.'
         })
       });
 
@@ -1318,7 +1318,8 @@
           document.getElementById('assigned-officer-name').innerText = `${dash.assigned_officer.name} (${dash.assigned_officer.designation})`;
           const jurisdictionLabel = t('officer.assignedJurisdiction', {}, undefined, 'Jurisdiction');
           const contactLabel = t('produce.contact', {}, undefined, 'Contact');
-          document.getElementById('assigned-officer-contact').innerText = `${jurisdictionLabel}: ${dash.assigned_officer.assigned_area}, ${dash.assigned_officer.district} | ${contactLabel}: ${dash.assigned_officer.phone || dash.assigned_officer.email}`;
+          const stateStr = dash.assigned_officer.state ? `, ${dash.assigned_officer.state}` : '';
+          document.getElementById('assigned-officer-contact').innerText = `${jurisdictionLabel}: ${dash.assigned_officer.assigned_area}, ${dash.assigned_officer.district}${stateStr} | ${contactLabel}: ${dash.assigned_officer.phone || dash.assigned_officer.email}`;
         } else {
           offCard.classList.add('hidden');
         }
@@ -2526,7 +2527,7 @@
       district: document.getElementById('reg-f-district')?.value?.trim() || 'Salem',
       state: document.getElementById('reg-f-state')?.value?.trim() || 'Tamil Nadu',
       land_unit: 'Acres',
-      farming_type: document.getElementById('reg-f-farming-type')?.value?.trim() || 'Conventional'
+      farming_type: document.getElementById('reg-f-farming-type')?.value?.trim() || 'Natural / Organic'
     };
 
     const landVal = parseFloat(document.getElementById('reg-f-land')?.value || '1.0');

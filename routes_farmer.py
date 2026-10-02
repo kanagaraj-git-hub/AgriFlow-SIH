@@ -126,6 +126,31 @@ async def get_dashboard(user: Dict[str, Any] = Depends(require_farmer)):
         fallback_officer = cursor.fetchone()
         officer_info = dict(fallback_officer) if fallback_officer else None
 
+    # Fallback to official mock officer registry if officer has not completed portal signup yet
+    if not officer_info:
+        cursor.execute("""
+            SELECT full_name as name, mobile as phone, NULL as email, designation, department,
+                   working_place as assigned_area, district, state
+            FROM officer_registry
+            WHERE LOWER(working_place) = LOWER(?) AND LOWER(district) = LOWER(?) AND LOWER(state) = LOWER(?)
+            LIMIT 1
+        """, (area, district, state))
+        reg_officer = cursor.fetchone()
+        if reg_officer:
+            officer_info = dict(reg_officer)
+
+    if not officer_info:
+        cursor.execute("""
+            SELECT full_name as name, mobile as phone, NULL as email, designation, department,
+                   working_place as assigned_area, district, state
+            FROM officer_registry
+            WHERE LOWER(district) = LOWER(?) AND LOWER(state) = LOWER(?)
+            LIMIT 1
+        """, (district, state))
+        reg_dist = cursor.fetchone()
+        if reg_dist:
+            officer_info = dict(reg_dist)
+
     conn.close()
 
     return {

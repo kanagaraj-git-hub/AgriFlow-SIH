@@ -138,14 +138,22 @@ async function run() {
 
     // 2. Navigate to AgriFlow
     await pageClient.send('Page.navigate', { url: 'http://127.0.0.1:8000/' });
-    await sleep(1500);
+    for (let i = 0; i < 40; i++) {
+      const ready = await pageClient.eval(`typeof window.navigate === 'function' && document.readyState === 'complete'`);
+      if (ready) break;
+      await sleep(250);
+    }
 
     // 3. Navigate to View Produce
     await pageClient.eval(`navigate('produce')`);
-    await sleep(1500);
 
-    // Verify produce cards rendered
-    const cardsCount = await pageClient.eval(`document.getElementById('produce-grid')?.children.length || 0`);
+    // Wait for produce cards to render
+    let cardsCount = 0;
+    for (let i = 0; i < 30; i++) {
+      cardsCount = await pageClient.eval(`document.getElementById('produce-grid')?.children.length || 0`);
+      if (cardsCount > 0) break;
+      await sleep(250);
+    }
     console.log(`[PASS] Found ${cardsCount} produce cards on public produce discovery.`);
     if (cardsCount === 0) throw new Error("No produce cards found");
 
@@ -265,12 +273,16 @@ async function run() {
       })()
     `);
     console.log(`[PASS] Logged in as Farmer:`, farmerLoginRes);
-    await sleep(1200);
-
     // Verify Purchase Requests section exists in Farmer Portal
     const prSectionTitle = await pageClient.eval(`document.querySelector('[data-i18n="purchaseRequests.title"]')?.innerText`);
-    const prBadge = await pageClient.eval(`document.getElementById('farmer-pr-pending-badge')?.innerText`);
-    const prRequestsListCount = await pageClient.eval(`document.getElementById('farmer-purchase-requests-list')?.children.length`);
+    let prBadge = '';
+    let prRequestsListCount = 0;
+    for (let i = 0; i < 25; i++) {
+      prBadge = await pageClient.eval(`document.getElementById('farmer-pr-pending-badge')?.innerText || ''`);
+      prRequestsListCount = await pageClient.eval(`document.getElementById('farmer-purchase-requests-list')?.children.length || 0`);
+      if (prRequestsListCount > 0) break;
+      await sleep(250);
+    }
 
     console.log(`[PASS] Farmer Portal Purchase Requests Section Title: "${prSectionTitle}"`);
     console.log(`[PASS] Pending Requests Badge: "${prBadge}"`);
