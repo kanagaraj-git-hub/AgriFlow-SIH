@@ -197,6 +197,22 @@ def init_db():
     );
     """)
 
+    # 11. Password Reset Tokens table (Secure temporary OTP and reset token)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        role TEXT NOT NULL,
+        otp_code TEXT NOT NULL,
+        reset_token TEXT,
+        expires_at TIMESTAMP NOT NULL,
+        attempts INTEGER DEFAULT 0,
+        verified INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+
     # Check and migrate columns safely for existing databases
     cursor.execute("PRAGMA table_info(produce_records)")
     columns = [row["name"] for row in cursor.fetchall()]
@@ -301,6 +317,8 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_reg_id ON officer_registry(officer_id);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_acc_officer_id ON officer_accounts(officer_id);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_officer_acc_login_id ON officer_accounts(login_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_reset_user ON password_reset_tokens(user_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_reset_token ON password_reset_tokens(reset_token);")
 
     # Automatically populate officer_registry if empty
     cursor.execute("SELECT COUNT(*) as cnt FROM officer_registry")

@@ -220,7 +220,43 @@ EN = {
     "otpExpiredNotice": "This OTP has expired. Please click Resend OTP to generate a new one.",
     "passwordMismatch": "Passwords do not match.",
     "resendOtpFailed": "Failed to resend OTP.",
-    "verificationFailed": "Verification Failed"
+    "verificationFailed": "Verification Failed",
+    "forgotPassword": "Forgot Password?",
+    "forgotPasswordTitle": "Reset Password",
+    "forgotPasswordSubtitle": "Enter your login identifier to receive a verification code.",
+    "sendResetCode": "Send Verification Code",
+    "sendingCode": "Sending Code...",
+    "enterResetIdentifier": "Login Identifier",
+    "resetIdentifierFarmerHint": "Enter your registered 10-digit mobile number.",
+    "resetIdentifierOfficerHint": "Enter your Officer ID, Login ID, or registered mobile number.",
+    "resetCodeSentTo": "Verification code sent to registered number",
+    "enterResetOtp": "Enter 6-digit verification code",
+    "verifyResetCode": "Verify Code",
+    "verifyingCode": "Verifying...",
+    "didntReceiveCode": "Didn't receive a code?",
+    "resendCode": "Resend Code",
+    "resendCodeIn": "Resend in {{seconds}}s",
+    "createNewPasswordTitle": "Create New Password",
+    "createNewPasswordSubtitle": "Enter your new password below. Must be at least 6 characters.",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password (min. 6 chars)",
+    "confirmNewPassword": "Confirm Password",
+    "confirmNewPasswordPlaceholder": "Re-enter new password",
+    "resetPasswordBtn": "Reset Password",
+    "resettingPassword": "Resetting...",
+    "passwordResetSuccessTitle": "Password Reset Successful!",
+    "passwordResetSuccessMsg": "Your password has been reset successfully. You can now sign in with your new password.",
+    "backToLogin": "Back to Login",
+    "accountNotFound": "Account not found. Please check your details or selected role.",
+    "invalidOrExpiredOtp": "Invalid or expired verification code.",
+    "maxAttemptsExceeded": "Maximum verification attempts exceeded. Please request a new code.",
+    "codeSentSuccess": "Verification code sent successfully!",
+    "codeVerifiedSuccess": "Verification code verified successfully!",
+    "cooldownWait": "Please wait {{seconds}} seconds before requesting a new code.",
+    "passwordPolicy": "Password must be at least 6 characters long.",
+    "passwordResetFailed": "Failed to reset password.",
+    "step1Identifier": "1. Identifier",
+    "step3NewPassword": "3. New Password"
   },
   "landing": {
     "verifiedPlatform": "Verified Local Produce Platform",
@@ -596,6 +632,7 @@ from locales_group4 import LOCALES_GROUP_4
 from locales_group5 import LOCALES_GROUP_5
 from update_locales_data import PRODUCE_TRANSLATIONS
 from add_purchase_translations import PURCHASE_AND_SOURCE_TRANSLATIONS
+from add_forgot_password_translations import FORGOT_PASSWORD_TRANSLATIONS
 
 ALL_LOCALES = { "en": EN }
 ALL_LOCALES.update(LOCALES_GROUP_1)
@@ -1210,6 +1247,14 @@ for code, custom_trans in PURCHASE_AND_SOURCE_TRANSLATIONS.items():
             loc["status"]["Accepted"] = loc["purchaseRequests"]["accepted"]
             loc["status"]["Rejected"] = loc["purchaseRequests"]["rejected"]
             loc["status"]["Pending"] = loc["purchaseRequests"]["pending"]
+
+# Apply Forgot Password translations for all 23 languages
+for code, fp_trans in FORGOT_PASSWORD_TRANSLATIONS.items():
+    if code in ALL_LOCALES:
+        loc = ALL_LOCALES[code]
+        if "auth" not in loc:
+            loc["auth"] = {}
+        loc["auth"].update(fp_trans["auth"])
 
 expected_codes = [
     "en", "as", "bn", "brx", "doi", "gu", "hi", "kn", "ks", "kok",

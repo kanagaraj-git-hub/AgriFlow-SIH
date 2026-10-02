@@ -717,7 +717,7 @@
     <section id="view-auth" class="spa-view hidden animate-fade-in max-w-md mx-auto py-8">
       <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
         <!-- Auth Switch Tabs -->
-        <div class="flex border-b border-slate-200">
+        <div id="auth-tabs-container" class="flex border-b border-slate-200">
           <button type="button" id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-center text-sm font-bold border-b-2 border-brand-700 text-brand-700 transition" data-i18n="auth.loginTab">
             Login
           </button>
@@ -727,7 +727,7 @@
         </div>
 
         <!-- Role Selector Pills -->
-        <div>
+        <div id="auth-role-selector">
           <label class="block text-xs font-bold text-slate-600 uppercase mb-2" data-i18n="auth.selectRole">Select Your Role</label>
           <div class="grid grid-cols-2 gap-2">
             <button type="button" id="role-btn-officer" onclick="setAuthRole('OFFICER')" class="p-3 rounded-xl border-2 border-brand-700 bg-brand-50/50 text-brand-800 font-bold text-xs flex flex-col items-center space-y-1 transition">
@@ -749,13 +749,201 @@
             <p id="login-officer-hint" class="hidden text-[11px] text-slate-500 mt-1">Sign in with your <strong class="text-slate-700">Officer ID</strong>, <strong class="text-slate-700">Login ID</strong>, or registered mobile.</p>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.password">Password</label>
-            <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-slate-600" data-i18n="auth.password">Password</label>
+              <button type="button" id="btn-forgot-password" data-action="forgot-password" onclick="openForgotPasswordFlow(event)" class="text-xs font-semibold text-brand-700 hover:text-brand-800 hover:underline transition cursor-pointer" data-i18n="auth.forgotPassword">
+                Forgot Password?
+              </button>
+            </div>
+            <div class="relative">
+              <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-3 pr-10 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <button type="button" onclick="togglePasswordVisibility('login-password', 'login-pw-toggle')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition" aria-label="Toggle password visibility">
+                <i data-lucide="eye" id="login-pw-toggle" class="w-4 h-4"></i>
+              </button>
+            </div>
           </div>
           <button type="submit" id="btn-login-submit" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.signIn">
             Sign In
           </button>
         </form>
+
+        <!-- FORGOT PASSWORD WIZARD (Step 1 -> Step 2 -> Step 3 -> Step 4) -->
+        <div id="forgot-password-wizard" class="hidden space-y-4">
+          <!-- Back to Login header -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <button type="button" onclick="closeForgotPasswordFlow()" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-brand-700 transition">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span data-i18n="auth.backToLogin">Back to Login</span>
+            </button>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="auth.forgotPasswordTitle">Reset Password</span>
+          </div>
+
+          <!-- Step Indicator -->
+          <div class="border-b border-slate-100 pb-3">
+            <div class="flex items-center justify-between text-[11px] font-semibold">
+              <span id="forgot-step-ind-1" class="text-brand-700 font-bold flex items-center gap-1">
+                <span class="w-4 h-4 rounded-full bg-brand-700 text-white text-[10px] inline-flex items-center justify-center font-mono">1</span>
+                <span data-i18n="auth.step1Identifier">1. Identifier</span>
+              </span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300"></i>
+              <span id="forgot-step-ind-2" class="text-slate-400 flex items-center gap-1">
+                <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-600 text-[10px] inline-flex items-center justify-center font-mono">2</span>
+                <span data-i18n="auth.step2Otp">2. Verification Code</span>
+              </span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300"></i>
+              <span id="forgot-step-ind-3" class="text-slate-400 flex items-center gap-1">
+                <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-600 text-[10px] inline-flex items-center justify-center font-mono">3</span>
+                <span data-i18n="auth.step3NewPassword">3. New Password</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- STEP 1: Enter Identifier -->
+          <div id="forgot-step-1" class="space-y-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900" data-i18n="auth.forgotPasswordTitle">Reset Password</h3>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="auth.forgotPasswordSubtitle">Enter your login identifier to receive a verification code.</p>
+            </div>
+
+            <!-- Role Selector for Forgot Password -->
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase mb-2" data-i18n="auth.selectRole">Select Your Role</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="forgot-role-officer" onclick="setForgotRole('OFFICER')" class="p-2.5 rounded-xl border-2 border-brand-700 bg-brand-50/50 text-brand-800 font-bold text-xs flex items-center justify-center gap-2 transition">
+                  <i data-lucide="building-2" class="w-4 h-4 text-brand-700"></i>
+                  <span data-i18n="roles.officer">Agriculture Officer</span>
+                </button>
+                <button type="button" id="forgot-role-farmer" onclick="setForgotRole('FARMER')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 hover:border-slate-300 transition">
+                  <i data-lucide="tractor" class="w-4 h-4 text-slate-500"></i>
+                  <span data-i18n="roles.farmer">Farmer</span>
+                </button>
+              </div>
+            </div>
+
+            <form id="form-forgot-identifier" onsubmit="handleSendResetCode(event)" class="space-y-3">
+              <div>
+                <label id="forgot-identifier-label" class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.officerLoginIdLabel">Officer ID / Login ID</label>
+                <input type="text" id="forgot-identifier-input" required placeholder="e.g. AGRI-TN-0001 or ravi_salem" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <p id="forgot-identifier-hint" class="text-[11px] text-slate-500 mt-1" data-i18n="auth.resetIdentifierOfficerHint">Enter your Officer ID, Login ID, or registered mobile number.</p>
+              </div>
+
+              <!-- Error Box for Step 1 -->
+              <div id="forgot-step1-error" class="hidden p-3 rounded-lg border text-xs"></div>
+
+              <button type="submit" id="btn-forgot-send-code" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm flex items-center justify-center gap-2">
+                <span id="btn-forgot-send-text" data-i18n="auth.sendResetCode">Send Verification Code</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- STEP 2: Enter Verification Code / Simulated OTP -->
+          <div id="forgot-step-2" class="hidden space-y-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900" data-i18n="auth.enterResetOtp">Enter 6-digit verification code</h3>
+              <p class="text-xs text-slate-600 mt-0.5">
+                <span data-i18n="auth.resetCodeSentTo">Verification code sent to registered number</span> <strong id="forgot-masked-mobile" class="font-mono text-slate-900">******3210</strong>
+              </p>
+            </div>
+
+            <!-- Demo OTP Banner -->
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
+                  <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span data-i18n="auth.demoOtpBanner">Demo OTP — Prototype Only</span>
+                </span>
+                <span id="forgot-otp-timer" class="text-[11px] font-mono font-bold text-amber-700">05:00</span>
+              </div>
+              <p class="text-[11px] text-amber-800 leading-snug" data-i18n="auth.demoOtpSimulatedNotice">
+                Prototype only — in production this OTP will be sent to the officer's registered mobile number.
+              </p>
+              <div class="flex items-center justify-between bg-white/90 p-2 rounded-lg border border-amber-200">
+                <div>
+                  <span class="text-xs text-slate-500 font-medium" data-i18n="auth.demoOtpLabel">Demo OTP:</span>
+                  <span id="forgot-demo-otp-val" class="font-mono font-black text-lg tracking-widest text-slate-900 ml-2">------</span>
+                </div>
+                <button type="button" onclick="autoFillForgotDemoOtp()" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-600 text-white hover:bg-amber-700 transition" data-i18n="auth.autoFillDemoOtp">
+                  Auto-fill
+                </button>
+              </div>
+            </div>
+
+            <form id="form-forgot-otp" onsubmit="handleVerifyResetCode(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.enterOtp">Enter OTP</label>
+                <input type="text" id="forgot-otp-input" maxlength="6" placeholder="••••••" data-i18n-placeholder="auth.enterOtpPlaceholder" class="w-full px-3 py-2.5 text-center text-lg font-mono tracking-widest rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+
+              <!-- Error Box for Step 2 -->
+              <div id="forgot-step2-error" class="hidden p-3 rounded-lg border text-xs"></div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button type="submit" id="btn-forgot-verify-code" class="py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.verifyResetCode">
+                  Verify Code
+                </button>
+                <button type="button" id="btn-forgot-resend-code" onclick="handleResendResetCode()" class="py-2.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition" data-i18n="auth.resendCode">
+                  Resend Code
+                </button>
+              </div>
+            </form>
+
+            <button type="button" onclick="goToForgotStep(1)" class="w-full text-center text-xs text-slate-500 hover:text-slate-800 underline">
+              ← Change Identifier
+            </button>
+          </div>
+
+          <!-- STEP 3: Create New Password -->
+          <div id="forgot-step-3" class="hidden space-y-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900" data-i18n="auth.createNewPasswordTitle">Create New Password</h3>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="auth.createNewPasswordSubtitle">Enter your new password below. Must be at least 6 characters.</p>
+            </div>
+
+            <form id="form-forgot-reset-password" onsubmit="handleResetPasswordSubmit(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.newPassword">New Password</label>
+                <div class="relative">
+                  <input type="password" id="forgot-new-password" required minlength="6" placeholder="••••••••" data-i18n-placeholder="auth.newPasswordPlaceholder" class="w-full pl-3 pr-10 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                  <button type="button" onclick="togglePasswordVisibility('forgot-new-password', 'forgot-pw-toggle-1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition" aria-label="Toggle password visibility">
+                    <i data-lucide="eye" id="forgot-pw-toggle-1" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="auth.confirmNewPassword">Confirm Password</label>
+                <div class="relative">
+                  <input type="password" id="forgot-confirm-password" required minlength="6" placeholder="••••••••" data-i18n-placeholder="auth.confirmNewPasswordPlaceholder" class="w-full pl-3 pr-10 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                  <button type="button" onclick="togglePasswordVisibility('forgot-confirm-password', 'forgot-pw-toggle-2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition" aria-label="Toggle password visibility">
+                    <i data-lucide="eye" id="forgot-pw-toggle-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Error Box for Step 3 -->
+              <div id="forgot-step3-error" class="hidden p-3 rounded-lg border text-xs"></div>
+
+              <button type="submit" id="btn-forgot-reset-pw" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.resetPasswordBtn">
+                Reset Password
+              </button>
+            </form>
+          </div>
+
+          <!-- STEP 4: Password Reset Successful! -->
+          <div id="forgot-step-4" class="hidden space-y-4 text-center py-4">
+            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
+              <i data-lucide="check-circle" class="w-8 h-8"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900" data-i18n="auth.passwordResetSuccessTitle">Password Reset Successful!</h3>
+              <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto" data-i18n="auth.passwordResetSuccessMsg">
+                Your password has been reset successfully. You can now sign in with your new password.
+              </p>
+            </div>
+            <button type="button" onclick="goToLoginAfterReset()" class="w-full py-2.5 text-sm font-bold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition shadow-sm" data-i18n="auth.backToLogin">
+              Back to Login
+            </button>
+          </div>
+        </div>
 
         <!-- 1. FARMER REGISTRATION FORM (Shown when role is Farmer) -->
         <form id="form-register-farmer" onsubmit="handleFarmerRegisterSubmit(event)" class="hidden space-y-3.5">
@@ -1385,6 +1573,6 @@
   </div>
 
   <!-- Application Logic -->
-  <script src="/static/app.js" charset="UTF-8"></script>
+  <script src="/static/app.js?v=2" charset="UTF-8"></script>
 </body>
 </html>

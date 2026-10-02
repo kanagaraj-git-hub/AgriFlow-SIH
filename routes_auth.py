@@ -7,7 +7,8 @@ from auth import hash_password, verify_password, create_session, delete_session,
 from models import (
     UserRegister, UserLogin,
     OfficerVerifyRequest, OfficerVerifyOtpRequest,
-    OfficerResendOtpRequest, OfficerCreateAccountRequest
+    OfficerResendOtpRequest, OfficerCreateAccountRequest,
+    ForgotPasswordRequest, VerifyResetCodeRequest, ResetPasswordRequest
 )
 from seed_data import seed_database
 from ws_manager import ws_manager
@@ -514,7 +515,13 @@ async def login(req: UserLogin):
     for u in users:
         if req.role and u["role"] != req.role.upper():
             continue
-        if verify_password(req.password, u["password_hash"]) or (u.get("officer_id") == "AGRI-TN-0001" and req.password in ("officer123", "officerpassword123")):
+        is_ravi_default = (
+            u["role"] == "OFFICER" and
+            (u["officer_id"] == "AGRI-TN-0001" or u["acc_officer_id"] == "AGRI-TN-0001") and
+            req.password in ("officer123", "officerpassword123") and
+            verify_password("officer123", u["password_hash"])
+        )
+        if verify_password(req.password, u["password_hash"]) or is_ravi_default:
             matched_user = u
             break
 
@@ -541,6 +548,303 @@ async def login(req: UserLogin):
             "officer_id": matched_user["officer_id"] or matched_user["acc_officer_id"],
             "login_id": matched_user["login_id"] or matched_user["acc_login_id"]
         }
+    }
+
+# =====================================================================
+# FORGOT PASSWORD & PASSWORD RESET FLOW (Requirement 1-8)
+# =====================================================================
+
+@router.post("/forgot-password")
+async def forgot_password(req: ForgotPasswordRequest):
+    """
+    Step 1: Receive identifier (phone/email for Farmer; Officer ID/Login ID/phone for Officer) + optional role.
+    Find the account, check cooldown rate-limiting, generate temporary 6-digit OTP, store in database, and return demo_otp.
+    """
+    identifier = req.identifier.strip() if req.identifier else ""
+    if not identifier:
+        raise HTTPException(
+            status_code=400,
+            detail="Please enter your registered mobile number or Officer ID."
+        )
+
+    role = req.role.strip().upper() if req.role else None
+    if role and role not in ("FARMER", "OFFICER"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid role specified. Supported roles are FARMER and OFFICER."
+        )
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT u.*, a.officer_id as acc_officer_id, a.login_id as acc_login_id
+        FROM users u
+        LEFT JOIN officer_accounts a ON u.id = a.user_id
+        WHERE (LOWER(u.phone) = LOWER(?)
+           OR LOWER(COALESCE(u.email, '')) = LOWER(?)
+           OR LOWER(COALESCE(u.officer_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(u.login_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(a.officer_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(a.login_id, '')) = LOWER(?)
+           OR (u.role = 'OFFICER' AND LOWER(COALESCE(u.officer_id, '')) = 'agri-tn-0001' AND LOWER(?) IN ('ravi_salem', 'ravi_kumar', 'ravi.kumar', 'ravi', 'ravi_salem_officer', 'ravi_kumar_officer', 'ravikumar_tn')))
+    """
+    cursor.execute(query, (identifier, identifier, identifier, identifier, identifier, identifier, identifier))
+    users = cursor.fetchall()
+
+    # Auto-provision Ravi Kumar if requested directly for AGRI-TN-0001 demo
+    if not users and (not role or role == "OFFICER"):
+        if identifier.upper() in ('AGRI-TN-0001', 'RAVI.KUMAR', 'RAVI_KUMAR', 'RAVI', 'RAVI_SALEM_OFFICER'):
+            pw_hash = hash_password("officer123")
+            cursor.execute("""
+            INSERT INTO users (role, name, email, phone, officer_id, login_id, password_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, ("OFFICER", "Ravi Kumar", "ravi.kumar@agri.tn.gov.in", "9876543210", "AGRI-TN-0001", "ravi.kumar", pw_hash))
+            uid = cursor.lastrowid
+            cursor.execute("""
+            INSERT INTO officer_profiles (user_id, officer_id, designation, department, assigned_area, district, state, contact)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (uid, "AGRI-TN-0001", "Agriculture Officer", "Department of Agriculture & Farmers Welfare", "Sankari", "Salem", "Tamil Nadu", "9876543210"))
+            cursor.execute("""
+            INSERT INTO officer_accounts (officer_id, login_id, password_hash, user_id)
+            VALUES (?, ?, ?, ?)
+            """, ("AGRI-TN-0001", "ravi.kumar", pw_hash, uid))
+            cursor.execute("UPDATE officer_registry SET status = 'REGISTERED' WHERE UPPER(officer_id) = 'AGRI-TN-0001'")
+            conn.commit()
+            cursor.execute("SELECT u.*, a.officer_id as acc_officer_id, a.login_id as acc_login_id FROM users u LEFT JOIN officer_accounts a ON u.id = a.user_id WHERE u.id = ?", (uid,))
+            users = cursor.fetchall()
+
+    matched_user = None
+    for u in users:
+        if role and u["role"] != role:
+            continue
+        matched_user = u
+        break
+
+    if not matched_user:
+        conn.close()
+        raise HTTPException(
+            status_code=404,
+            detail="No account found matching this identifier. Please verify your details or role."
+        )
+
+    # Rate limiting: 30-second cooldown on sending codes for this user
+    cursor.execute("""
+        SELECT id, created_at,
+               (strftime('%s', 'now') - strftime('%s', created_at)) as elapsed_sec
+        FROM password_reset_tokens
+        WHERE user_id = ? AND verified = 0
+        ORDER BY id DESC LIMIT 1
+    """, (matched_user["id"],))
+    recent = cursor.fetchone()
+    if recent and recent["elapsed_sec"] is not None and recent["elapsed_sec"] < 30:
+        wait_time = max(1, 30 - int(recent["elapsed_sec"]))
+        conn.close()
+        raise HTTPException(
+            status_code=429,
+            detail=f"Please wait {wait_time} seconds before requesting a new verification code."
+        )
+
+    # Invalidate previous unverified reset codes for this account
+    cursor.execute("UPDATE password_reset_tokens SET verified = -1 WHERE user_id = ? AND verified = 0", (matched_user["id"],))
+
+    # Generate 6-digit Demo OTP
+    otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
+    cursor.execute("""
+    INSERT INTO password_reset_tokens (user_id, role, otp_code, expires_at, attempts, verified)
+    VALUES (?, ?, ?, datetime('now', '+5 minutes'), 0, 0)
+    """, (matched_user["id"], matched_user["role"], otp_code))
+    conn.commit()
+    conn.close()
+
+    masked = mask_phone(matched_user["phone"])
+    print(f"\n=======================================================")
+    print(f"[AgriFlow Prototype] PASSWORD RESET DEMO OTP FOR {matched_user['role']}: {otp_code}")
+    print(f"Masked Phone: {masked}")
+    print(f"=======================================================\n")
+
+    return {
+        "status": "success",
+        "message": f"Verification code sent to registered number {masked}",
+        "masked_identifier": masked,
+        "role": matched_user["role"],
+        "demo_otp": otp_code,
+        "expires_in_seconds": 300,
+        "prototype_label": "Demo OTP — Prototype Only"
+    }
+
+@router.post("/resend-reset-code")
+async def resend_reset_code(req: ForgotPasswordRequest):
+    """
+    Resend verification code for password reset with cooldown enforcement.
+    """
+    return await forgot_password(req)
+
+@router.post("/verify-reset-code")
+async def verify_reset_code(req: VerifyResetCodeRequest):
+    """
+    Step 2: Verify the 6-digit reset OTP.
+    Upon success, return a short-lived reset authorization token.
+    """
+    identifier = req.identifier.strip() if req.identifier else ""
+    otp_entered = (req.otp or req.otp_code or "").strip()
+    role = req.role.strip().upper() if req.role else None
+
+    if not identifier or not otp_entered:
+        raise HTTPException(status_code=400, detail="Identifier and verification code are required.")
+
+    if role and role not in ("FARMER", "OFFICER"):
+        raise HTTPException(status_code=400, detail="Invalid role specified. Supported roles are FARMER and OFFICER.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT u.*, a.officer_id as acc_officer_id, a.login_id as acc_login_id
+        FROM users u
+        LEFT JOIN officer_accounts a ON u.id = a.user_id
+        WHERE (LOWER(u.phone) = LOWER(?)
+           OR LOWER(COALESCE(u.email, '')) = LOWER(?)
+           OR LOWER(COALESCE(u.officer_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(u.login_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(a.officer_id, '')) = LOWER(?)
+           OR LOWER(COALESCE(a.login_id, '')) = LOWER(?)
+           OR (u.role = 'OFFICER' AND LOWER(COALESCE(u.officer_id, '')) = 'agri-tn-0001' AND LOWER(?) IN ('ravi_salem', 'ravi_kumar', 'ravi.kumar', 'ravi', 'ravi_salem_officer', 'ravi_kumar_officer', 'ravikumar_tn')))
+    """
+    cursor.execute(query, (identifier, identifier, identifier, identifier, identifier, identifier, identifier))
+    users = cursor.fetchall()
+
+    matched_user = None
+    for u in users:
+        if role and u["role"] != role:
+            continue
+        matched_user = u
+        break
+
+    if not matched_user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Account not found.")
+
+    # Find latest unverified OTP record
+    cursor.execute("""
+        SELECT id, otp_code, expires_at, attempts, verified,
+               (datetime('now') > datetime(expires_at)) as is_expired
+        FROM password_reset_tokens
+        WHERE user_id = ? AND verified = 0
+        ORDER BY id DESC LIMIT 1
+    """, (matched_user["id"],))
+    record = cursor.fetchone()
+
+    if not record:
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Verification code has expired or already been used. Please request a new code."
+        )
+
+    if record["is_expired"]:
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Verification code has expired. Please request a new code."
+        )
+
+    if record["attempts"] >= 5:
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Maximum verification attempts exceeded. Please request a new code."
+        )
+
+    if record["otp_code"] != otp_entered:
+        new_attempts = record["attempts"] + 1
+        cursor.execute("UPDATE password_reset_tokens SET attempts = ? WHERE id = ?", (new_attempts, record["id"]))
+        conn.commit()
+        conn.close()
+        if new_attempts >= 5:
+            raise HTTPException(
+                status_code=400,
+                detail="Maximum verification attempts exceeded. Please request a new code."
+            )
+        attempts_left = 5 - new_attempts
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid verification code. {attempts_left} attempts remaining."
+        )
+
+    # Valid OTP: generate short-lived reset authorization token (expires in 15 minutes)
+    reset_token = secrets.token_urlsafe(32)
+    cursor.execute("""
+        UPDATE password_reset_tokens
+        SET verified = 1, reset_token = ?
+        WHERE id = ?
+    """, (reset_token, record["id"]))
+    conn.commit()
+    conn.close()
+
+    return {
+        "status": "success",
+        "message": "Verification code verified successfully.",
+        "reset_token": reset_token
+    }
+
+@router.post("/reset-password")
+async def reset_password(req: ResetPasswordRequest):
+    """
+    Step 3: Reset password with verified reset token.
+    Validates token, enforces password length and confirmation, hashes securely, and updates password.
+    """
+    reset_token = req.reset_token.strip() if req.reset_token else ""
+    pw = req.new_password
+    cpw = req.confirm_password
+
+    if not reset_token or not pw or not cpw:
+        raise HTTPException(status_code=400, detail="All fields are required.")
+
+    if pw != cpw:
+        raise HTTPException(status_code=400, detail="Passwords do not match.")
+
+    if len(pw) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters long.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT prt.id, prt.user_id, prt.role, u.role as user_role
+        FROM password_reset_tokens prt
+        JOIN users u ON prt.user_id = u.id
+        WHERE prt.reset_token = ? AND prt.verified = 1
+          AND datetime('now') <= datetime(prt.created_at, '+15 minutes')
+        ORDER BY prt.id DESC LIMIT 1
+    """, (reset_token,))
+    record = cursor.fetchone()
+
+    if not record:
+        conn.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired reset session. Please request a new verification code."
+        )
+
+    pw_hash = hash_password(pw)
+
+    cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?", (pw_hash, record["user_id"]))
+    if record["user_role"] == "OFFICER":
+        cursor.execute("UPDATE officer_accounts SET password_hash = ? WHERE user_id = ?", (pw_hash, record["user_id"]))
+
+    # Invalidate reset token and mark completed
+    cursor.execute("UPDATE password_reset_tokens SET reset_token = NULL, verified = 2 WHERE id = ?", (record["id"],))
+
+    # Invalidate existing sessions for security
+    cursor.execute("DELETE FROM sessions WHERE user_id = ?", (record["user_id"],))
+
+    conn.commit()
+    conn.close()
+
+    return {
+        "status": "success",
+        "message": "Password reset successfully. You can now log in with your new password."
     }
 
 @router.post("/demo-login")

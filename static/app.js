@@ -265,6 +265,15 @@
     // Initialize lucide icons
     lucide.createIcons();
 
+    // Event delegation for Forgot Password triggers (supports [data-action="forgot-password"] and #btn-forgot-password)
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-action="forgot-password"], #btn-forgot-password');
+      if (trigger) {
+        event.preventDefault();
+        openForgotPasswordFlow(event);
+      }
+    });
+
     // Handle URL hash routing if present
     const hash = window.location.hash.replace('#', '');
     if (hash) {
@@ -1835,11 +1844,18 @@
     const formLogin = document.getElementById('form-login');
     const formRegisterFarmer = document.getElementById('form-register-farmer');
     const officerWizard = document.getElementById('officer-reg-wizard');
+    const forgotWizard = document.getElementById('forgot-password-wizard');
+    const authTabs = document.getElementById('auth-tabs-container');
+    const roleSelector = document.getElementById('auth-role-selector');
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
     const idLabel = document.getElementById('login-identifier-label');
     const idInput = document.getElementById('login-identifier');
     const officerHint = document.getElementById('login-officer-hint');
+
+    if (forgotWizard) forgotWizard.classList.add('hidden');
+    if (authTabs) authTabs.classList.remove('hidden');
+    if (roleSelector) roleSelector.classList.remove('hidden');
 
     if (tab === 'login') {
       if (typeof officerRegState !== 'undefined' && officerRegState && officerRegState.step === 5) {
@@ -2463,6 +2479,574 @@
       if (pwInput) pwInput.focus();
     }
   }
+  // -------------------------------------------------------------
+  // FORGOT PASSWORD / PASSWORD RESET FLOW (Requirement 1-8)
+  // -------------------------------------------------------------
+  let forgotPasswordState = {
+    step: 1,
+    role: 'OFFICER',
+    identifier: '',
+    maskedIdentifier: '',
+    demoOtp: '',
+    resetToken: '',
+    otpTimerInterval: null,
+    resendCooldownInterval: null,
+    resendSecondsRemaining: 0
+  };
+
+  function togglePasswordVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input) return;
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+      input.type = 'password';
+      if (icon) icon.setAttribute('data-lucide', 'eye');
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function openForgotPasswordFlow(roleOrEvent = null) {
+    if (roleOrEvent && typeof roleOrEvent === 'object' && typeof roleOrEvent.preventDefault === 'function') {
+      roleOrEvent.preventDefault();
+      roleOrEvent = null;
+    }
+    const role = (typeof roleOrEvent === 'string' && roleOrEvent) ? roleOrEvent.toUpperCase() : null;
+    const targetRole = role || currentAuthRole || 'OFFICER';
+    resetForgotPasswordState();
+
+    const authTabs = document.getElementById('auth-tabs-container');
+    const roleSelector = document.getElementById('auth-role-selector');
+    const formLogin = document.getElementById('form-login');
+    const formRegisterFarmer = document.getElementById('form-register-farmer');
+    const officerWizard = document.getElementById('officer-reg-wizard');
+    const forgotWizard = document.getElementById('forgot-password-wizard');
+
+    if (authTabs) authTabs.classList.add('hidden');
+    if (roleSelector) roleSelector.classList.add('hidden');
+    if (formLogin) formLogin.classList.add('hidden');
+    if (formRegisterFarmer) formRegisterFarmer.classList.add('hidden');
+    if (officerWizard) officerWizard.classList.add('hidden');
+    if (forgotWizard) forgotWizard.classList.remove('hidden');
+
+    setForgotRole(targetRole);
+    goToForgotStep(1);
+
+    // Pre-fill identifier from login form if present
+    const loginIdInput = document.getElementById('login-identifier');
+    const forgotIdInput = document.getElementById('forgot-identifier-input');
+    if (loginIdInput && forgotIdInput && loginIdInput.value.trim()) {
+      forgotIdInput.value = loginIdInput.value.trim();
+    } else if (forgotIdInput) {
+      forgotIdInput.value = '';
+      forgotIdInput.focus();
+    }
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function closeForgotPasswordFlow() {
+    resetForgotPasswordState();
+    const forgotWizard = document.getElementById('forgot-password-wizard');
+    const authTabs = document.getElementById('auth-tabs-container');
+    const roleSelector = document.getElementById('auth-role-selector');
+
+    if (forgotWizard) forgotWizard.classList.add('hidden');
+    if (authTabs) authTabs.classList.remove('hidden');
+    if (roleSelector) roleSelector.classList.remove('hidden');
+
+    switchAuthTab('login');
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function setForgotRole(role) {
+    forgotPasswordState.role = role;
+    const btnOff = document.getElementById('forgot-role-officer');
+    const btnFarm = document.getElementById('forgot-role-farmer');
+    const idLabel = document.getElementById('forgot-identifier-label');
+    const idInput = document.getElementById('forgot-identifier-input');
+    const idHint = document.getElementById('forgot-identifier-hint');
+
+    if (role === 'OFFICER') {
+      btnOff?.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnOff?.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
+      btnFarm?.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnFarm?.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
+
+      if (idLabel) idLabel.textContent = t('auth.officerLoginIdLabel', {}, undefined, 'Officer ID / Login ID');
+      if (idInput) idInput.placeholder = 'e.g. AGRI-TN-0001 or ravi_salem';
+      if (idHint) idHint.textContent = t('auth.resetIdentifierOfficerHint', {}, undefined, 'Enter your Officer ID, Login ID, or registered mobile number.');
+    } else {
+      btnFarm?.classList.add('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnFarm?.classList.remove('border-slate-200', 'bg-white', 'text-slate-600');
+      btnOff?.classList.remove('border-brand-700', 'bg-brand-50/50', 'text-brand-800');
+      btnOff?.classList.add('border-slate-200', 'bg-white', 'text-slate-600');
+
+      if (idLabel) idLabel.textContent = t('auth.mobileNumber', {}, undefined, 'Mobile Number');
+      if (idInput) idInput.placeholder = 'e.g. 9123456780';
+      if (idHint) idHint.textContent = t('auth.resetIdentifierFarmerHint', {}, undefined, 'Enter your registered 10-digit mobile number.');
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function goToForgotStep(step) {
+    forgotPasswordState.step = step;
+    for (let s = 1; s <= 4; s++) {
+      const stepEl = document.getElementById(`forgot-step-${s}`);
+      if (stepEl) {
+        if (s === step) stepEl.classList.remove('hidden');
+        else stepEl.classList.add('hidden');
+      }
+      const ind = document.getElementById(`forgot-step-ind-${s}`);
+      if (ind) {
+        const badge = ind.querySelector('span:first-child');
+        if (s === step) {
+          ind.className = 'text-brand-700 font-bold flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-brand-700 text-white text-[10px] inline-flex items-center justify-center font-mono';
+        } else if (s < step) {
+          ind.className = 'text-emerald-700 font-semibold flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px] inline-flex items-center justify-center font-mono';
+        } else {
+          ind.className = 'text-slate-400 flex items-center gap-1';
+          if (badge) badge.className = 'w-4 h-4 rounded-full bg-slate-200 text-slate-600 text-[10px] inline-flex items-center justify-center font-mono';
+        }
+      }
+    }
+
+    if (step === 1) {
+      document.getElementById('forgot-identifier-input')?.focus();
+    } else if (step === 2) {
+      document.getElementById('forgot-otp-input')?.focus();
+    } else if (step === 3) {
+      document.getElementById('forgot-new-password')?.focus();
+    }
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function resetForgotPasswordState() {
+    if (forgotPasswordState.otpTimerInterval) {
+      clearInterval(forgotPasswordState.otpTimerInterval);
+      forgotPasswordState.otpTimerInterval = null;
+    }
+    if (forgotPasswordState.resendCooldownInterval) {
+      clearInterval(forgotPasswordState.resendCooldownInterval);
+      forgotPasswordState.resendCooldownInterval = null;
+    }
+
+    forgotPasswordState = {
+      step: 1,
+      role: currentAuthRole || 'OFFICER',
+      identifier: '',
+      maskedIdentifier: '',
+      demoOtp: '',
+      resetToken: '',
+      otpTimerInterval: null,
+      resendCooldownInterval: null,
+      resendSecondsRemaining: 0
+    };
+
+    ['forgot-step1-error', 'forgot-step2-error', 'forgot-step3-error'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add('hidden');
+        el.innerHTML = '';
+      }
+    });
+
+    const otpInput = document.getElementById('forgot-otp-input');
+    if (otpInput) otpInput.value = '';
+    const newPw = document.getElementById('forgot-new-password');
+    if (newPw) newPw.value = '';
+    const confirmPw = document.getElementById('forgot-confirm-password');
+    if (confirmPw) confirmPw.value = '';
+
+    const resendBtn = document.getElementById('btn-forgot-resend-code');
+    if (resendBtn) {
+      resendBtn.disabled = false;
+      resendBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      resendBtn.textContent = t('auth.resendCode', {}, undefined, 'Resend Code');
+    }
+  }
+
+  function startForgotOtpCountdown(seconds = 300) {
+    if (forgotPasswordState.otpTimerInterval) {
+      clearInterval(forgotPasswordState.otpTimerInterval);
+    }
+    let remaining = seconds;
+    const timerEl = document.getElementById('forgot-otp-timer');
+
+    function update() {
+      const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+      const s = (remaining % 60).toString().padStart(2, '0');
+      if (timerEl) timerEl.textContent = `${m}:${s}`;
+      if (remaining <= 0) {
+        clearInterval(forgotPasswordState.otpTimerInterval);
+        forgotPasswordState.otpTimerInterval = null;
+        if (timerEl) timerEl.textContent = '00:00';
+      }
+      remaining--;
+    }
+
+    update();
+    forgotPasswordState.otpTimerInterval = setInterval(update, 1000);
+  }
+
+  function startForgotResendCooldown(seconds = 30) {
+    if (forgotPasswordState.resendCooldownInterval) {
+      clearInterval(forgotPasswordState.resendCooldownInterval);
+    }
+    forgotPasswordState.resendSecondsRemaining = seconds;
+    const btn = document.getElementById('btn-forgot-resend-code');
+    if (!btn) return;
+
+    btn.disabled = true;
+    btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+    function tick() {
+      if (forgotPasswordState.resendSecondsRemaining <= 0) {
+        clearInterval(forgotPasswordState.resendCooldownInterval);
+        forgotPasswordState.resendCooldownInterval = null;
+        btn.disabled = false;
+        btn.classList.remove('opacity-60', 'cursor-not-allowed');
+        btn.textContent = t('auth.resendCode', {}, undefined, 'Resend Code');
+      } else {
+        btn.textContent = t('auth.resendCodeIn', { seconds: forgotPasswordState.resendSecondsRemaining }, undefined, `Resend in ${forgotPasswordState.resendSecondsRemaining}s`);
+        forgotPasswordState.resendSecondsRemaining--;
+      }
+    }
+
+    tick();
+    forgotPasswordState.resendCooldownInterval = setInterval(tick, 1000);
+  }
+
+  async function handleSendResetCode(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const idInput = document.getElementById('forgot-identifier-input');
+    const errBox = document.getElementById('forgot-step1-error');
+    const btn = document.getElementById('btn-forgot-send-code');
+    const btnText = document.getElementById('btn-forgot-send-text');
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    const identifier = idInput ? idInput.value.trim() : '';
+    if (!identifier) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.textContent = t('auth.enterResetIdentifier', {}, undefined, 'Please enter your login identifier.');
+        errBox.classList.remove('hidden');
+      }
+      idInput?.focus();
+      return;
+    }
+
+    try {
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+      if (btnText) {
+        btnText.innerHTML = `<span class="inline-flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>${escapeHtml(t('auth.sendingCode', {}, undefined, 'Sending Code...'))}</span></span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: identifier,
+          role: forgotPasswordState.role
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        forgotPasswordState.identifier = identifier;
+        forgotPasswordState.maskedIdentifier = data.masked_identifier || '******';
+        forgotPasswordState.demoOtp = data.demo_otp || '';
+
+        const maskedEl = document.getElementById('forgot-masked-mobile');
+        if (maskedEl) maskedEl.textContent = data.masked_identifier || '******';
+
+        const otpValEl = document.getElementById('forgot-demo-otp-val');
+        if (otpValEl) otpValEl.textContent = data.demo_otp || '------';
+
+        const otpInput = document.getElementById('forgot-otp-input');
+        if (otpInput) otpInput.value = '';
+
+        startForgotOtpCountdown(data.expires_in_seconds || 300);
+        startForgotResendCooldown(30);
+
+        goToForgotStep(2);
+        showToast(t('auth.codeSentSuccess', {}, undefined, 'Verification code sent successfully!'), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-900 text-xs space-y-1';
+          errBox.innerHTML = `<strong>${escapeHtml(t('common.error', {}, undefined, 'Error'))}:</strong> ${escapeHtml(data.detail || t('auth.accountNotFound', {}, undefined, 'Account not found. Please check your details.'))}`;
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error requesting reset code:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.textContent = t('auth.networkError', {}, undefined, 'Network error sending verification code.');
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+      if (btnText) {
+        btnText.textContent = t('auth.sendResetCode', {}, undefined, 'Send Verification Code');
+      }
+    }
+  }
+
+  function autoFillForgotDemoOtp() {
+    const input = document.getElementById('forgot-otp-input');
+    if (input && forgotPasswordState.demoOtp) {
+      input.value = forgotPasswordState.demoOtp;
+      input.focus();
+    }
+  }
+
+  async function handleVerifyResetCode(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const otpInput = document.getElementById('forgot-otp-input');
+    const errBox = document.getElementById('forgot-step2-error');
+    const btn = document.getElementById('btn-forgot-verify-code');
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    const otp = otpInput ? otpInput.value.trim() : '';
+    if (!otp || otp.length !== 6) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.innerHTML = `<strong>${escapeHtml(t('common.warning', {}, undefined, 'Warning'))}:</strong> ${escapeHtml(t('auth.enterSixDigitOtp', {}, undefined, 'Please enter the 6-digit OTP code.'))}`;
+        errBox.classList.remove('hidden');
+      }
+      otpInput?.focus();
+      return;
+    }
+
+    try {
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+      const res = await fetch('/api/auth/verify-reset-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: forgotPasswordState.identifier,
+          otp: otp,
+          role: forgotPasswordState.role
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        if (forgotPasswordState.otpTimerInterval) {
+          clearInterval(forgotPasswordState.otpTimerInterval);
+          forgotPasswordState.otpTimerInterval = null;
+        }
+        forgotPasswordState.resetToken = data.reset_token;
+
+        goToForgotStep(3);
+        showToast(t('auth.codeVerifiedSuccess', {}, undefined, 'Verification code verified successfully!'), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.innerHTML = `<strong>${escapeHtml(t('common.error', {}, undefined, 'Error'))}:</strong> ${escapeHtml(data.detail || t('auth.invalidOrExpiredOtp', {}, undefined, 'Invalid or expired verification code.'))}`;
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error verifying reset code:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.textContent = t('auth.networkError', {}, undefined, 'Network error verifying code.');
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+    }
+  }
+
+  async function handleResendResetCode() {
+    if (forgotPasswordState.resendSecondsRemaining > 0) {
+      showToast(t('auth.cooldownWait', { seconds: forgotPasswordState.resendSecondsRemaining }, undefined, `Please wait ${forgotPasswordState.resendSecondsRemaining} seconds before requesting a new code.`), 'warning');
+      return;
+    }
+    const errBox = document.getElementById('forgot-step2-error');
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    try {
+      const res = await fetch('/api/auth/resend-reset-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: forgotPasswordState.identifier,
+          role: forgotPasswordState.role
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        forgotPasswordState.demoOtp = data.demo_otp || '';
+        const otpValEl = document.getElementById('forgot-demo-otp-val');
+        if (otpValEl) otpValEl.textContent = data.demo_otp || '------';
+        const otpInput = document.getElementById('forgot-otp-input');
+        if (otpInput) otpInput.value = '';
+
+        startForgotOtpCountdown(data.expires_in_seconds || 300);
+        startForgotResendCooldown(30);
+
+        showToast(t('auth.codeSentSuccess', {}, undefined, 'New verification code sent!'), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.textContent = data.detail || t('auth.resendOtpFailed', {}, undefined, 'Failed to resend code.');
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error resending code:", err);
+      showToast(t('auth.networkError', {}, undefined, 'Network error resending code.'), 'error');
+    }
+  }
+
+  async function handleResetPasswordSubmit(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const newPwInput = document.getElementById('forgot-new-password');
+    const confirmPwInput = document.getElementById('forgot-confirm-password');
+    const errBox = document.getElementById('forgot-step3-error');
+    const btn = document.getElementById('btn-forgot-reset-pw');
+
+    if (errBox) {
+      errBox.classList.add('hidden');
+      errBox.innerHTML = '';
+    }
+
+    const newPw = newPwInput ? newPwInput.value : '';
+    const confirmPw = confirmPwInput ? confirmPwInput.value : '';
+
+    if (!newPw || !confirmPw) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.textContent = t('auth.requiredFields', {}, undefined, 'Please fill in both password fields.');
+        errBox.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (newPw.length < 6) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs';
+        errBox.textContent = t('auth.passwordLengthError', {}, undefined, 'Password must be at least 6 characters long.');
+        errBox.classList.remove('hidden');
+      }
+      newPwInput?.focus();
+      return;
+    }
+
+    if (newPw !== confirmPw) {
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.textContent = t('auth.passwordMismatch', {}, undefined, 'Passwords do not match.');
+        errBox.classList.remove('hidden');
+      }
+      confirmPwInput?.focus();
+      return;
+    }
+
+    try {
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reset_token: forgotPasswordState.resetToken,
+          new_password: newPw,
+          confirm_password: confirmPw
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        goToForgotStep(4);
+        showToast(t('auth.passwordResetSuccessTitle', {}, undefined, 'Password Reset Successful!'), 'success');
+      } else {
+        if (errBox) {
+          errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+          errBox.textContent = data.detail || t('auth.passwordResetFailed', {}, undefined, 'Failed to reset password.');
+          errBox.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Error resetting password:", err);
+      if (errBox) {
+        errBox.className = 'p-3 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs';
+        errBox.textContent = t('auth.networkError', {}, undefined, 'Network error resetting password.');
+        errBox.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+    }
+  }
+
+  function goToLoginAfterReset() {
+    const prefillId = forgotPasswordState.identifier;
+    closeForgotPasswordFlow();
+    const idInput = document.getElementById('login-identifier');
+    if (idInput && prefillId) {
+      idInput.value = prefillId;
+    }
+    const pwInput = document.getElementById('login-password');
+    if (pwInput) {
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  }
+
+  window.togglePasswordVisibility = togglePasswordVisibility;
+  window.openForgotPasswordFlow = openForgotPasswordFlow;
+  window.closeForgotPasswordFlow = closeForgotPasswordFlow;
+  window.setForgotRole = setForgotRole;
+  window.goToForgotStep = goToForgotStep;
+  window.handleSendResetCode = handleSendResetCode;
+  window.handleVerifyResetCode = handleVerifyResetCode;
+  window.handleResendResetCode = handleResendResetCode;
+  window.autoFillForgotDemoOtp = autoFillForgotDemoOtp;
+  window.handleResetPasswordSubmit = handleResetPasswordSubmit;
+  window.goToLoginAfterReset = goToLoginAfterReset;
 
   // -------------------------------------------------------------
   // LOGIN SUBMIT

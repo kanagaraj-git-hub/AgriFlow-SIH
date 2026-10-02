@@ -42,6 +42,21 @@ class OfficerCreateAccountRequest(BaseModel):
     password: str
     confirm_password: str
 
+class ForgotPasswordRequest(BaseModel):
+    identifier: str
+    role: Optional[str] = None # 'FARMER' or 'OFFICER'
+
+class VerifyResetCodeRequest(BaseModel):
+    identifier: str
+    otp: Optional[str] = None
+    otp_code: Optional[str] = None
+    role: Optional[str] = None
+
+class ResetPasswordRequest(BaseModel):
+    reset_token: str
+    new_password: str
+    confirm_password: str
+
 
 class OfficerProfileUpdate(BaseModel):
     name: str

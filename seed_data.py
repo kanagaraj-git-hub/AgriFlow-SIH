@@ -15,6 +15,7 @@ def seed_database(clean: bool = True):
         cursor.execute("DELETE FROM officer_profiles;")
         cursor.execute("DELETE FROM officer_accounts;")
         cursor.execute("DELETE FROM otp_verifications;")
+        cursor.execute("DELETE FROM password_reset_tokens;")
         cursor.execute("DELETE FROM sessions;")
         cursor.execute("DELETE FROM users;")
 
